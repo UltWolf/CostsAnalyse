@@ -12,7 +12,7 @@ namespace CostsAnalyse.Models.Context
         {
 
         }
-        public DbSet<User> users { get; set; }
+        public DbSet<User> Users { get; set; }
         public DbSet<Company> Companies { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Information> Informations { get; set; }

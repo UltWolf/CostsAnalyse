@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using CostsAnalyse.Models;
 using CostsAnalyse.Models.Context;
+using CostsAnalyse.Services.Abstracts;
+using CostsAnalyse.Services.Repositories;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -37,6 +39,7 @@ namespace CostsAnalyse
             services.AddDbContext<ApplicationContext>(m=> m.UseSqlServer(Configuration.GetConnectionString("StringConnection")));
             services.AddIdentity<User, IdentityRole>()
                .AddEntityFrameworkStores<ApplicationContext>();
+            services.AddSingleton<IRepository<User>,UserRepository<User>>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
