@@ -15,6 +15,7 @@ namespace CostsAnalyse.Models.Context
         public DbSet<User> Users { get; set; }
         public DbSet<Company> Companies { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Changes> Changes{get;set;}
         public DbSet<Information> Informations { get; set; }
         public DbSet<Price> Prices { get; set; }
     }
