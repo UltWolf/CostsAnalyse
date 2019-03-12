@@ -36,9 +36,10 @@ namespace CostsAnalyse
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddDbContext<ApplicationContext>(m=> m.UseSqlServer(Configuration.GetConnectionString("StringConnection")));
-            services.AddIdentity<User, IdentityRole>()
-               .AddEntityFrameworkStores<ApplicationContext>();
+            //services.AddIdentity<User, IdentityRole>()
+            //   .AddEntityFrameworkStores<ApplicationContext>();
             services.AddSingleton<IRepository<User>,UserRepository<User>>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

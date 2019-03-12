@@ -8,11 +8,15 @@ namespace CostsAnalyse.Models.Context
 {
     public class ApplicationContext:DbContext
     {
-        public ApplicationContext(DbContextOptions<ApplicationContext> dbContext) : base(dbContext)
+        public ApplicationContext()
         {
 
         }
-        public DbSet<User> Users { get; set; }
+        //public ApplicationContext(DbContextOptions options) : base(options) { }
+        public ApplicationContext(DbContextOptions<ApplicationContext> dbContext) : base(dbContext)
+        {
+
+        } 
         public DbSet<Company> Companies { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Changes> Changes{get;set;}

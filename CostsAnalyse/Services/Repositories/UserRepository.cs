@@ -8,8 +8,8 @@ namespace CostsAnalyse.Services.Repositories
 {
     public class UserRepository<User> : IRepository<Models.User>
     {
-        private readonly ApplicationContext _appContext;
-        public UserRepository(ApplicationContext appContext)
+        private readonly UserContext _appContext;
+        public UserRepository(UserContext appContext)
         {
             this._appContext = appContext;
         }
@@ -44,8 +44,7 @@ namespace CostsAnalyse.Services.Repositories
         public bool Update(Models.User item)
         {
             try
-            {
-                this._appContext.Users.Update(item);
+            { 
                 this._appContext.SaveChanges();
                 return true;
             }
