@@ -7,6 +7,13 @@ namespace CostsAnalyse.Models
 {
     public class Company
     {
+        public Company() { }
+        public Company(string name,string url)
+        {
+            this.Name = name;
+            this.URL = url;
+
+        }
         public int Id { get; set; }
         public string Name { get; set; }
         public string URL  { get; set; }
