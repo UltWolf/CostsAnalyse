@@ -27,8 +27,15 @@ namespace CostsAnalyse.Services.Parses
                 using (StreamReader reader = new StreamReader(stream))
                 {
                     string json = reader.ReadToEnd();
-                    html = JsonConvert.DeserializeObject<ParseRozetkaElement>(json);
-                }
+                    try
+                    {
+                        html = JsonConvert.DeserializeObject<ParseRozetkaElement>(json);
+                    }
+                    catch(Exception)
+                    {
+                        return null;
+                    }
+                    }
             }
             product.Name = html.content[0].content.title_only;
             product.Price = new Price(decimal.Parse(html.content[0].content.price), html.content[0].content.old_price);
