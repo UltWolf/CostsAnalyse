@@ -6,12 +6,22 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 
 namespace CostsAnalyse.Services.PageDrivers
 {
     public class RozetkaPageDriver
     {
+        public HashSet<String> GetPages() {
+            HashSet<String> pages ;
+            using (FileStream fs = new FileStream("RozetkaHrefs.txt", FileMode.Open, FileAccess.Read))
+            {
+                BinaryFormatter bf = new BinaryFormatter();
+                pages = (HashSet<String>)bf.Deserialize(fs);
+            }
+            return pages;
+        }
         public List<Product> ParseProductsFromPage(string url)
         {
             var products = new List<Product>();
@@ -44,11 +54,9 @@ namespace CostsAnalyse.Services.PageDrivers
                 catch (Exception ex)
                 {
                     return products;
-                }
-
+                } 
             }
-            return products;
-
+            return products; 
         }
     }
 }

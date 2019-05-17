@@ -24,7 +24,21 @@ namespace CostsAnalyse.Controllers
         {
             return View(await _context.Products.ToListAsync());
         }
-
+        public async Task<IActionResult> Search(string nameOfProduct)
+        {
+            if (nameOfProduct != null)
+            {
+                var products = _context.Products.Where(m => m.Name.Contains(nameOfProduct));
+                if (products == null)
+                {
+                    return View(products);
+                }
+                return NotFound();
+            }
+            else {
+                return View("InputName");
+            }
+        }
         // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
         {

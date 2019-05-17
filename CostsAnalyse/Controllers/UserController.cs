@@ -5,5 +5,6 @@ namespace CostsAnalyse.Controllers
 {
     public class UserController : Controller
     {
+        
     }
 }

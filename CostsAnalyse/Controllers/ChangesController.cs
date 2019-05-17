@@ -14,6 +14,9 @@ namespace CostsAnalyse.Controllers
         public ChangesController(ApplicationContext context) {
             _appContext = context;
         }
+
+
+
         [HttpPost]
         public void AddChange(Changes change)
         {

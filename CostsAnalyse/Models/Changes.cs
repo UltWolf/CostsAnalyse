@@ -1,4 +1,5 @@
-using System;
+using System; 
+using CostsAnalyse.Services.Data;
 
 namespace CostsAnalyse.Models
 {
@@ -8,7 +9,7 @@ namespace CostsAnalyse.Models
         public bool isAdmin { get; set; }
         public int UserId{get;set;}
         public DateTime Date { get; set; }
-        public Data.TypeOfChange change {get;set;}
+        public  TypeOfChange change {get;set;}
         public int IdGoal { get; set; }         
     }
 }
