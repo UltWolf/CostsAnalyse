@@ -4,13 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using CostsAnalyse.Models;
 using CostsAnalyse.Models.Context;
-using CostsAnalyse.Services.Abstracts;
-using CostsAnalyse.Services.Repositories;
-using Microsoft.AspNet.Identity.EntityFramework;
+using CostsAnalyse.Services.Abstracts; 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -36,11 +35,12 @@ namespace CostsAnalyse
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddDbContext<ApplicationContext>(m=> m.UseSqlServer(Configuration.GetConnectionString("StringConnection")));
-            //services.AddIdentity<User, IdentityRole>()
-            //   .AddEntityFrameworkStores<ApplicationContext>();
-            services.AddSingleton<IRepository<User>,UserRepository<User>>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); 
+            services.AddIdentity<UserApp, IdentityRole>()
+               .AddEntityFrameworkStores<ApplicationContext>();
+            services.AddDbContext<ApplicationContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("StringConnection")));
+             
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 

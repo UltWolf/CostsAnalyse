@@ -22,5 +22,6 @@ namespace CostsAnalyse.Models.Context
         public DbSet<Changes> Changes{get;set;}
         public DbSet<Information> Informations { get; set; }
         public DbSet<Price> Prices { get; set; }
+        public DbSet<UserApp> Users { get; set; }
     }
 }
