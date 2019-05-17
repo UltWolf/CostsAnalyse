@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace CostsAnalyse.Models
 {
-    public class User : IdentityUser
+    public class UserApp: IdentityUser
     {
+        [PersonalData]
         public int Year { get; set; }
+        [PersonalData]
         public string Country { get; set; }
 
     }
