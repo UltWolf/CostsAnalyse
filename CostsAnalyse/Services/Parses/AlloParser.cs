@@ -72,7 +72,7 @@ namespace CostsAnalyse.Services.Parses
             {
                 var title = tr.GetElementsByTagName("td")[0].TextContent;
                 var value = tr.GetElementsByTagName("td")[1].TextContent;
-                product.AddInformation(title, value);
+                product.AddInformation(title, new Value { Notice = value });
             }
             product.Company = new Company("Allo", url); 
             product.Price = price;

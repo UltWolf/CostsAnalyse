@@ -51,7 +51,7 @@ namespace CostsAnalyse.Services.Parses
             {
                 var title = li.GetElementsByTagName("p")[0].TextContent;
                 var value = li.GetElementsByTagName("p")[1].TextContent;
-                product.AddInformation(title, value); 
+                product.AddInformation(title, new Value { Notice = value }); 
             }
             product.Company = new Company("Foxtrot", url);
             return product;

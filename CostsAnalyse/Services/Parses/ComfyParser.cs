@@ -80,7 +80,7 @@ namespace CostsAnalyse.Services.Parses
             {
                 var title = item.GetElementsByClassName("title")[0].TextContent;
                 var value = item.GetElementsByClassName("value__item")[0].TextContent;
-                product.AddInformation(title, value);
+                product.AddInformation(title, new Value { Notice = value });
             }
             product.Company = new Company("Comfy", url);
             return product;

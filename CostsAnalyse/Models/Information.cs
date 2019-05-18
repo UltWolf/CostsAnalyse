@@ -9,15 +9,15 @@ namespace CostsAnalyse.Models
     {
         public int Id { get; set; }
         public string Key { get; set; }
-        public List<string> Value { get; set; }
+        public List<Value> Value { get; set; }
         public Information()
         {
-            this.Value = new List<string>();
+            this.Value = new List<Value>();
         }
-        public Information(string key,string value)
+        public Information(string key,Value value)
         {
             this.Key = key;
-            this.Value = new List<string>();
+            this.Value = new List<Value>();
             this.Value.Add(value);
         }
       

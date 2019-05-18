@@ -63,7 +63,7 @@ namespace CostsAnalyse.Services.Parses
             {
                 string title = tr.GetElementsByClassName("chars-t-cell")[0].TextContent;
                 string value = tr.GetElementsByClassName("chars-value-inner")[0].TextContent;
-                product.AddInformation(title, value);
+                product.AddInformation(title, new Value { Notice = value });
 
             }
             return product;

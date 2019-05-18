@@ -11,7 +11,7 @@ namespace CostsAnalyse.Models
         {
             this.Information = new List<Information>();
         }
-        public void AddInformation(string key, string value)
+        public void AddInformation(string key, Value value)
         {
             bool IsExist = Information.Any(m => m.Key == key);
             Information information;
