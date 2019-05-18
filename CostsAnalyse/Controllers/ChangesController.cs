@@ -4,10 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using CostsAnalyse.Models;
 using CostsAnalyse.Models.Context;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CostsAnalyse.Controllers
 {
+    [Authorize(Roles = "Administrators, Moderators")]
     public class ChangesController : Controller
     {
         private readonly ApplicationContext _appContext;
