@@ -35,9 +35,15 @@ namespace CostsAnalyse
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); 
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddIdentity<UserApp, IdentityRole>()
-               .AddEntityFrameworkStores<ApplicationContext>();
+               .AddEntityFrameworkStores<ApplicationContext>()
+               .AddDefaultTokenProviders();
+            services.ConfigureApplicationCookie(configure => {
+                configure.AccessDeniedPath = "error/accessdenied";
+                configure.LoginPath = "user/login";
+                configure.LogoutPath = "user/logoff";
+            });
             services.AddDbContext<ApplicationContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("StringConnection")));
              
