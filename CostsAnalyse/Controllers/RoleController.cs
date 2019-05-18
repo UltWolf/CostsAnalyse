@@ -28,17 +28,23 @@ namespace CostsAnalyse.Controllers
         public IActionResult ListAdmins()
         {
             var users = this._userManager.GetUsersInRoleAsync("admin");
+            ViewData["role"] = "admins";
+            ViewData["DeleteAction"] = "RemoveFromAdmins";
             return View(users);
         }
         public IActionResult ListModerators()
         {
             var users = this._userManager.GetUsersInRoleAsync("moderator");
+            ViewData["DeleteAction"] = "RemoveFromModerators";
+            ViewData["role"] = "moderators";
             return View(users);
         }
 
         public IActionResult ListUsers()
         {
             var users = this._userManager.GetUsersInRoleAsync("user");
+            ViewData["DeleteAction"] = "RemoveFromUsers";
+            ViewData["role"] = "users";
             return View(users);
         }
 
@@ -53,7 +59,7 @@ namespace CostsAnalyse.Controllers
                     return RedirectToAction("ListAdmins");
                 }
             }
-            return View();
+            return View("RemoveFromRoleError");
         }
         public async Task<IActionResult> RemoveFromModerators([FromRoute] string userId)
         {
@@ -66,7 +72,7 @@ namespace CostsAnalyse.Controllers
                     return RedirectToAction("ListModerators");
                 }
             }
-            return View();
+            return View("RemoveFromRoleError");
         }
         public async Task<IActionResult> RemoveFromUsers([FromRoute] string userId)
         {
@@ -92,7 +98,7 @@ namespace CostsAnalyse.Controllers
                     return RedirectToAction("ListUsers");
                 }
             }
-            return View();
+            return View("RemoveFromRoleError");
         }
     }
 }
