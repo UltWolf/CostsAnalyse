@@ -21,8 +21,8 @@ namespace CostsAnalyse.Controllers.ProfileControllers
 
         public IActionResult Index()
         {
-            _context.Users.First(m=>User);
-            return View();
+            var user = _context.Users.First(m=>m.Id ==_userId);
+            return View(user.products);
         }
     }
 }
