@@ -70,7 +70,7 @@ namespace CostsAnalyse
             app.UseCookiePolicy();
             app.UseAuthentication();
 
-            DbInitializer.InitializeMigrations(app);
+            DbInitializer.InitializeMigrations();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
