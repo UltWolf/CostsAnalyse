@@ -1,4 +1,5 @@
 ﻿using AngleSharp.Html.Parser;
+using CostsAnalyse.Extensions;
 using CostsAnalyse.Models;
 using CostsAnalyse.Services.Parses;
 using System;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace CostsAnalyse.Services.PageDrivers
 {
-    public class RozetkaPageDriver
+    public class RozetkaPageDriver:IPageDrivers
     {
         public HashSet<String> GetPages() {
             HashSet<String> pages ;
@@ -21,6 +22,14 @@ namespace CostsAnalyse.Services.PageDrivers
                 pages = (HashSet<String>)bf.Deserialize(fs);
             }
             return pages;
+        }
+        public List<Product> GetProducts() {
+            var pages = GetPages();
+            List<Product> products = new List<Product>();
+            foreach (var page in pages) {
+                products.Add(ParseProductsFromPage(page));
+            }
+            return products;
         }
         public List<Product> ParseProductsFromPage(string url)
         {
@@ -58,5 +67,6 @@ namespace CostsAnalyse.Services.PageDrivers
             }
             return products; 
         }
+ 
     }
 }

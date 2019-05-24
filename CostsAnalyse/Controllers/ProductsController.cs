@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using CostsAnalyse.Models;
 using CostsAnalyse.Models.Context;
 using Microsoft.AspNetCore.Authorization;
+using CostsAnalyse.Services;
+using CostsAnalyse.Extensions;
 
 namespace CostsAnalyse.Controllers
 {
@@ -23,9 +25,23 @@ namespace CostsAnalyse.Controllers
 
         [AllowAnonymous]
         // GET: Products
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromRoute]int page= 0)
         {
-            return View(await _context.Products.ToListAsync());
+            var products = this._context.Products.Skip(page * 20).Take(20);
+            return View(products);
+        }
+        public async Task<IActionResult> AutoAdd() {
+            List<Product> products = new List<Product>();
+             var services = ParsingServicesManager.GetListServices();
+            foreach (var service in services) {
+                products.Add(service.GetProducts());
+            }
+            foreach (var product in products)
+            {
+                this._context.Products.Add(product);
+                this._context.SaveChanges();
+            }
+            return new JsonResult("Ok");
         }
         [AllowAnonymous]
         public async Task<IActionResult> Search(string nameOfProduct)
