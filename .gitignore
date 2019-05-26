@@ -260,3 +260,4 @@ paket-files/
 __pycache__/
 *.pyc
 /CostsAnalyse/Migrations
+/CostsAnalyse/RozetkaHrefs.txt

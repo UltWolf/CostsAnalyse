@@ -75,7 +75,7 @@ namespace CostsAnalyse.Services.Parses
             }
             var TableElement = DomDocument.GetElementById("featuresList");
             var ElementOfTable = DomDocument.GetElementsByClassName("features-item__list-wr");
-            product.Price = price;
+            product.Price = new List<Price>() { price };
             foreach(var item in ElementOfTable)
             {
                 var title = item.GetElementsByClassName("title")[0].TextContent;

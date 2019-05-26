@@ -75,7 +75,7 @@ namespace CostsAnalyse.Services.Parses
                 product.AddInformation(title, new Value { Notice = value });
             }
             product.Company = new Company("Allo", url); 
-            product.Price = price;
+            product.Price = new List<Price>() { price };
             return product;
         }
     }

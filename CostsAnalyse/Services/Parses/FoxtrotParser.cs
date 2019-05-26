@@ -44,7 +44,7 @@ namespace CostsAnalyse.Services.Parses
                 decimal currentPrice = decimal.Parse(currentDiv[0].GetElementsByClassName("numb")[0].TextContent);
                 price = new Price(currentPrice);
             }
-            product.Price = price;
+            product.Price = new List<Price>() { price };
             var divCharacter = DomDocument.GetElementsByClassName("characteristic__block")[0];
             var lis = divCharacter.GetElementsByTagName("li");
             foreach(var li in lis)

@@ -57,10 +57,9 @@ namespace CostsAnalyse.Controllers
             if (ModelState.IsValid)
             {
                 var result =
-                    await _signInManager.PasswordSignInAsync(model.Username, model.Password, false, false);
+                    await _signInManager.PasswordSignInAsync(model.Username, model.Password, true, true);
                 if (result.Succeeded)
-                {
-                    // проверяем, принадлежит ли URL приложению
+                { 
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                     {
                         return Redirect(model.ReturnUrl);

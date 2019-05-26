@@ -30,7 +30,9 @@ namespace CostsAnalyse.Controllers
             var products = this._context.Products.Skip(page * 20).Take(20);
             return View(products);
         }
+        [Authorize(Roles ="Administrator")]
         public async Task<IActionResult> AutoAdd() {
+           
             List<Product> products = new List<Product>();
              var services = ParsingServicesManager.GetListServices();
             foreach (var service in services) {
@@ -38,10 +40,24 @@ namespace CostsAnalyse.Controllers
             }
             foreach (var product in products)
             {
-                this._context.Products.Add(product);
-                this._context.SaveChanges();
+                var existProduct = _context.Products.First(m=>product.Name == m.Name);
+                if (existProduct == null)
+                {
+                    this._context.Products.Add(product);
+                    this._context.SaveChanges();
+                }
+                else
+                {
+                    existProduct.Price.Add(product.Price[0]);
+                    this._context.Update(existProduct);
+                    this._context.SaveChanges();
+                }
             }
             return new JsonResult("Ok");
+        }
+        public void InitHrefs() {
+            RozetkaMenuDriver rmd = new RozetkaMenuDriver();
+            rmd.getPages();
         }
         [AllowAnonymous]
         public async Task<IActionResult> Search(string nameOfProduct)

@@ -17,10 +17,10 @@ namespace CostsAnalyse.Services.Initializers
             var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
             IdentityResult roleResult; 
-            var roleCheckAdmin = await RoleManager.RoleExistsAsync("Admin");
+            var roleCheckAdmin = await RoleManager.RoleExistsAsync("Administrator");
             if (!roleCheckAdmin)
             { 
-                roleResult = await RoleManager.CreateAsync(new IdentityRole("Admin"));
+                roleResult = await RoleManager.CreateAsync(new IdentityRole("Administrator"));
             } 
             var roleCheckModerator = await RoleManager.RoleExistsAsync("Moderator");
             if (!roleCheckModerator)

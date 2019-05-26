@@ -30,7 +30,7 @@ namespace CostsAnalyse.Models
         public string Name { get; set; }
         public string Category { get; set; }
         public ICollection<Information> Information { get; set; }
-        public Price Price { get; set; }
+        public List<Price> Price { get; set; }
         public Company Company { get; set; }
         
     }

@@ -3,7 +3,7 @@
     ViewData["Title"] = "Login";
 }
 @model CostsAnalyse.ViewModels.LoginViewModel
-<form method="post" asp-controller="Account" asp-action="Login"
+<form method="post" asp-controller="User" asp-action="Login"
       asp-route-returnUrl="@Model.ReturnUrl">
     <div asp-validation-summary="ModelOnly"></div>
     <div>

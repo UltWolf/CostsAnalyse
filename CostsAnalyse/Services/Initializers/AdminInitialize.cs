@@ -14,8 +14,11 @@ namespace CostsAnalyse.Services.Initializers
         public async void Initialize(IServiceProvider serviceProvider)
         {
            var manager =  serviceProvider.GetRequiredService<UserManager<UserApp>>();
-           var admin = await manager.FindByEmailAsync("ultwolf@gmail.com");
-            manager.AddToRolesAsync(admin, new List<string>() { "Administrator" });
-        }
+            var admin = await manager.FindByEmailAsync("ultwolf@gmail.com");
+            if (admin != null)
+            {
+               await manager.AddToRoleAsync(admin, "Administrator");
+            }
+            }
     }
 }

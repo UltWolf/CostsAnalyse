@@ -14,20 +14,22 @@ namespace CostsAnalyse.Services
         {
             List<IPageDrivers> parsers = new List<IPageDrivers>();
             string nspace = "CostsAnalyse.Services.PageDrivers";
-            var q = from t in Assembly.GetExecutingAssembly().GetTypes()
-                    where t.IsClass && t.Namespace == nspace
+            var q = from t in Assembly.GetExecutingAssembly().GetTypes() 
+            where t.IsClass && t.Namespace == nspace
                     select t;
             q.ToList().ForEach(m =>
             {
-                if (m.IsClass) {
-                    Type NameOfType = Type.GetType(m.Name);
+                if (m.IsClass)
+                {
+                    string name = "CostsAnalyse.Services.PageDrivers." + m.Name + ",CostsAnalyse";
+                    Type NameOfType = Type.GetType(name);
                     var InstanceOfParser = Activator.CreateInstance(NameOfType) as IPageDrivers;
                     if (InstanceOfParser != null)
                     {
                         parsers.Add(InstanceOfParser);
-                    } 
+                    }
                 }
-                }
+            }
             );
             return parsers;
         }

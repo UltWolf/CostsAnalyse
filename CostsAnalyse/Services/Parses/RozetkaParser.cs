@@ -38,7 +38,7 @@ namespace CostsAnalyse.Services.Parses
                     }
             }
             product.Name = html.content[0].content.title_only;
-            product.Price = new Price(decimal.Parse(html.content[0].content.price), html.content[0].content.old_price);
+            product.Price = new List<Price>() { new Price(decimal.Parse(html.content[0].content.price), html.content[0].content.old_price) };
             product.Company = new Company("Rozetka", url);
 
             product.Category = html.content[0].content.parent_title;

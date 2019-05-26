@@ -12,12 +12,15 @@ namespace CostsAnalyse.Services.Initializers
     public class UserInitialize:IInitialize
     { 
 
-        public void Initialize(IServiceProvider serviceProvider)
+        public async   void Initialize(IServiceProvider serviceProvider)
         {
             var UserManager = serviceProvider.GetRequiredService<UserManager<UserApp>>();
-            UserApp userApp = new UserApp() { Email = "ultwolf@gmail.com", UserName = "UltWolf" };
-            UserManager.CreateAsync(userApp,"1234");
-
+            var user = await UserManager.FindByEmailAsync("ultwolf@gmail.com");
+            if (user == null)
+            {
+                UserApp userApp = new UserApp() { Email = "ultwolf@gmail.com", UserName = "UltWolf", Country = "Ukraine" };
+                await UserManager.CreateAsync(userApp, "123456Vitalka");
+            }
         }
     }
 }

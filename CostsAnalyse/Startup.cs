@@ -36,11 +36,22 @@ namespace CostsAnalyse
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+          
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddIdentity<UserApp, IdentityRole>(m =>
-            m.Password.RequireDigit = true)
+            services.AddIdentity<UserApp, IdentityRole>(o =>
+            {
+                o.Password.RequireDigit = false;
+
+                o.Password.RequireLowercase = false;
+
+                o.Password.RequireUppercase = false;
+
+                o.Password.RequireNonAlphanumeric = false;
+
+                o.Password.RequiredLength = 6;
+            })
                .AddEntityFrameworkStores<ApplicationContext>()
-               .AddDefaultTokenProviders();
+               .AddDefaultTokenProviders(); 
             services.ConfigureApplicationCookie(configure => {
                 configure.AccessDeniedPath = "/error/accessdenied";
                 configure.LoginPath = "/user/login";
@@ -50,6 +61,18 @@ namespace CostsAnalyse
                 options.UseSqlServer(Configuration.GetConnectionString("StringConnection")));
              
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            var provider = services.BuildServiceProvider();
+            //lately cut`s in another class for initialization
+            DbInitializer dbInitializer = new DbInitializer();
+            dbInitializer.Initialize(provider);
+            UserInitialize userInitialize = new UserInitialize();
+            userInitialize.Initialize(provider);
+            RoleInitializer roleInitializer = new RoleInitializer();
+            roleInitializer.Initialize(provider);
+            AdminInitialize adminInitialize = new AdminInitialize();
+            adminInitialize.Initialize(provider);
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,9 +91,7 @@ namespace CostsAnalyse
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-            app.UseAuthentication();
-
-            DbInitializer.InitializeMigrations();
+            app.UseAuthentication(); 
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

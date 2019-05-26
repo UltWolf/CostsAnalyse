@@ -16,7 +16,7 @@ namespace CostsAnalyse.Controllers
     {
         private readonly string _userId;
         private readonly ApplicationContext _context;
-        public ProfileController(IHttpContextAccessor httpContextAccessor,ApplicationContext context)
+        public ProfileController(IHttpContextAccessor httpContextAccessor, ApplicationContext context)
         {
             _userId = httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             _context = context;
@@ -29,10 +29,11 @@ namespace CostsAnalyse.Controllers
             return View(user);
         }
 
-        public IActionResult ListProduct() {
+        public IActionResult ListProduct()
+        {
             var user = _context.Users.First(m => m.Id == _userId);
             return View(user.products);
         }
-        
+
     }
 }
