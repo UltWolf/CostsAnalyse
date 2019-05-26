@@ -8,12 +8,19 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 using System.Threading.Tasks;
+using CostsAnalyse.Services.ProxyServer;
 
 namespace CostsAnalyse.Services.PageDrivers
 {
     public class RozetkaPageDriver:IPageDrivers
     {
+        int index = -1;
+        List<string> proxyList = new List<string>();
+        public RozetkaPageDriver() {
+            this.proxyList = ProxyServerConnectionManagment.GetProxyHrefs();
+        }
         public HashSet<String> GetPages() {
             HashSet<String> pages ;
             using (FileStream fs = new FileStream("RozetkaHrefs.txt", FileMode.Open, FileAccess.Read))
@@ -33,11 +40,23 @@ namespace CostsAnalyse.Services.PageDrivers
         }
         public List<Product> ParseProductsFromPage(string url)
         {
+            
+            Random rand = new Random();
+            int TimeDelay = 7000 * rand.Next(9);
+            Thread.Sleep(TimeDelay);
+
+            
+
             var products = new List<Product>();
             try
             {
                 WebRequest WR = WebRequest.Create(url);
                 WR.Method = "GET";
+                string[] fulladress = proxyList[index].Split(";");
+                var (adress, port) = (fulladress[1],int.Parse(fulladress[2]));
+                WebProxy myproxy = new WebProxy(adress, port);
+                myproxy.BypassProxyOnLocal = false;
+                WR.Proxy = myproxy ;
                 WebResponse response = WR.GetResponse();
                 string html;
                 using (Stream stream = response.GetResponseStream())
@@ -64,12 +83,15 @@ namespace CostsAnalyse.Services.PageDrivers
                         }
                     }
                     catch (Exception ex)
-                    {
-                        return products;
+                    { 
                     }
                 }
             }
-            catch (Exception ex) { }
+            catch (TimeoutException ex) {
+                if (index < proxyList.Count-1) {
+                    return ParseProductsFromPage(url);
+                }
+            }
             return products; 
         }
  
