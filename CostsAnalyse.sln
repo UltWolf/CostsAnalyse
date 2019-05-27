@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.28705.295
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CostsAnalyse", "CostsAnalyse\CostsAnalyse.csproj", "{6E719B1F-52C6-48F4-B25C-40B6B90AABE7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestsForCostsAnalyse", "TestsForCostsAnalyse\TestsForCostsAnalyse.csproj", "{4088E2BE-9083-47B1-881E-29D890ABD53F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestsForCostsAnalyse", "TestsForCostsAnalyse\TestsForCostsAnalyse.csproj", "{4088E2BE-9083-47B1-881E-29D890ABD53F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
