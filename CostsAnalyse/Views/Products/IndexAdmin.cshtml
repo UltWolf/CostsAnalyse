@@ -1,0 +1,34 @@
+﻿@model IEnumerable<CostsAnalyse.Models.Product>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+    <a asp-action="AutoAdd">Auto add </a>
+    <a asp-controller="ServerRequest" asp-action="UpdateProxy"> Update proxys</a>
+      <a asp-controller="ServerRequest" asp-action="GetPagesMin"> Add Min page</a>
+        <a asp-controller="ServerRequest" asp-action="GetPagesAuto">Add max page</a>
+</p>
+<div class="container">
+@foreach (var item in Model) {
+    <div class="item" ><div>
+        
+                @Html.DisplayFor(modelItem => item.Name)<br>
+            <a asp-action="Details" asp-route-id="@item.Id">
+                <img src= @Html.DisplayFor(modelItem => item.UrlImage)>   
+            </a><br>
+                @Html.DisplayFor(modelItem => item.Price[item.Price.Count-1].Cost);
+                 @if(item.Price[item.Price.Count-1].IsDiscont){
+
+ @Html.DisplayFor(modelItem => item.Price[item.Price.Count-1].OldCost);
+                }
+         </div>
+        </div>
+}
+       </div>
+    </tbody>
+</table>

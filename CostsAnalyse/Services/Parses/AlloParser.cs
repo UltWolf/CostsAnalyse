@@ -13,7 +13,7 @@ namespace CostsAnalyse.Services.Parses
 {
     public class AlloParser : IParser
     {
-        public Product GetProduct(string url)
+        public Product GetProduct(string url,int index, ref List<string> proxyList)
         {
             Product product = new Product();
             WebRequest WR = WebRequest.Create(url+ "?tab=specs");
@@ -63,7 +63,7 @@ namespace CostsAnalyse.Services.Parses
                     previousPriceString.Append(numbers1[i]);
                 }
                 decimal oldPrice = decimal.Parse(previousPriceString.ToString());
-                price = new Price(oldPrice);
+                price = new Price(oldPrice){Company = new Company("Allo", url)};
             }
             product.Name = DomDocument.GetElementById("product-title-h1").TextContent.Replace("Характеристики","");
             var informationBlock = DomDocument.GetElementsByClassName("spec-block")[0];
@@ -73,8 +73,7 @@ namespace CostsAnalyse.Services.Parses
                 var title = tr.GetElementsByTagName("td")[0].TextContent;
                 var value = tr.GetElementsByTagName("td")[1].TextContent;
                 product.AddInformation(title, new Value { Notice = value });
-            }
-            product.Company = new Company("Allo", url); 
+            } 
             product.Price = new List<Price>() { price };
             return product;
         }

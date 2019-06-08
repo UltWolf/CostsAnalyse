@@ -9,8 +9,8 @@ namespace CostsAnalyse.Services.PageDrivers
     public interface IPageDrivers
     {
         HashSet<String> GetPages();
-        List<Product> ParseProductsFromPage(string url);
-        List<Product> GetProducts();
+        void ParseProductsFromPage(string url,int index);
+        void GetProducts();
 
 
     }

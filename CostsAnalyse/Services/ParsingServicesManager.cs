@@ -1,4 +1,5 @@
-﻿using CostsAnalyse.Services.PageDrivers;
+﻿using CostsAnalyse.Models.Context;
+using CostsAnalyse.Services.PageDrivers;
 using CostsAnalyse.Services.Parses;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace CostsAnalyse.Services
 {
     public static class ParsingServicesManager
     {
-        public static List<IPageDrivers> GetListServices()
+        public static List<IPageDrivers> GetListServices(ApplicationContext context)
         {
             List<IPageDrivers> parsers = new List<IPageDrivers>();
             string nspace = "CostsAnalyse.Services.PageDrivers";
@@ -23,11 +24,13 @@ namespace CostsAnalyse.Services
                 {
                     string name = "CostsAnalyse.Services.PageDrivers." + m.Name + ",CostsAnalyse";
                     Type NameOfType = Type.GetType(name);
-                    var InstanceOfParser = Activator.CreateInstance(NameOfType) as IPageDrivers;
+                    if(NameOfType!=null){
+                    var InstanceOfParser = Activator.CreateInstance(NameOfType,context) as IPageDrivers;
                     if (InstanceOfParser != null)
                     {
                         parsers.Add(InstanceOfParser);
-                    }
+                    }}
+                    
                 }
             }
             );

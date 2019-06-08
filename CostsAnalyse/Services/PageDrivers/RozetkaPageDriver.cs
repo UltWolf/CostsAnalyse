@@ -11,15 +11,17 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Threading.Tasks;
 using CostsAnalyse.Services.ProxyServer;
+using CostsAnalyse.Models.Context;
 
 namespace CostsAnalyse.Services.PageDrivers
 {
     public class RozetkaPageDriver:IPageDrivers
     {
-        int index = -1;
         List<string> proxyList = new List<string>();
-        public RozetkaPageDriver() {
+        private readonly ApplicationContext _context;
+        public RozetkaPageDriver(ApplicationContext Context) {
             this.proxyList = ProxyServerConnectionManagment.GetProxyHrefs();
+            this._context = Context;
         }
         public HashSet<String> GetPages() {
             HashSet<String> pages ;
@@ -30,30 +32,31 @@ namespace CostsAnalyse.Services.PageDrivers
             }
             return pages;
         }
-        public List<Product> GetProducts() {
+        public void GetProducts() {
+            
             var pages = GetPages();
             List<Product> products = new List<Product>();
-            foreach (var page in pages) {
-                products.Add(ParseProductsFromPage(page));
+            foreach (var page in pages)
+            {
+                if (proxyList.Count <= 1)
+                {
+                        break;
+                }
+               ParseProductsFromPage(page,0);
             }
-            return products;
+           
         }
-        public List<Product> ParseProductsFromPage(string url)
+        public void ParseProductsFromPage(string url,int index)
         {
             
-            Random rand = new Random();
-            int TimeDelay = 7000 * rand.Next(9);
-            Thread.Sleep(TimeDelay);
-
-            
-
-            var products = new List<Product>();
+            ThreadDelay.Delay();
+           
             try
             {
                 WebRequest WR = WebRequest.Create(url);
                 WR.Method = "GET";
-                string[] fulladress = proxyList[index].Split(";");
-                var (adress, port) = (fulladress[1],int.Parse(fulladress[2]));
+                string[] fulladress = proxyList[++index].Split(":");
+                var (adress, port) = (fulladress[0],int.Parse(fulladress[1]));
                 WebProxy myproxy = new WebProxy(adress, port);
                 myproxy.BypassProxyOnLocal = false;
                 WR.Proxy = myproxy ;
@@ -66,6 +69,7 @@ namespace CostsAnalyse.Services.PageDrivers
                         html = reader.ReadToEnd();
                     }
                 }
+                
                 HtmlParser parser = new HtmlParser();
                 var parseElement = parser.ParseDocument(html);
                 var divsWithProduct = parseElement.GetElementsByClassName("g-i-tile-catalog");
@@ -76,23 +80,49 @@ namespace CostsAnalyse.Services.PageDrivers
                     {
                         string urlForPage = div.GetElementsByClassName("g-i-tile-i-title")[0].GetElementsByTagName("a")[0].GetAttribute("href");
                         
-                        var product = rp.GetProduct(urlForPage);
-                        if (product != null)
-                        {
-                            products.Add(product);
+                        var product = rp.GetProduct(urlForPage,0,ref proxyList);
+                        var productFromContext = _context.Products.FirstOrDefault(m=> m.Index == product.Index);
+                        if(productFromContext ==null){
+                            product.Price = product.LastPrice;
+                            _context.Add(product);
+                            _context.SaveChanges();
+                        }else{
+                            productFromContext.Price.Add(product.LastPrice);
+                            var  lastPrice = productFromContext.LastPrice.FirstOrDefault(m=>m.Company.Equals(product.LastPrice[0].Company));
+                            if(lastPrice!=null){
+                                lastPrice = product.LastPrice[0];
+                            }else{
+                                productFromContext.LastPrice.Add(product.LastPrice[0]);
+                            }
+                            _context.Products.Update(productFromContext);
+                            _context.SaveChanges();
                         }
+                        
                     }
                     catch (Exception ex)
                     { 
                     }
                 }
             }
-            catch (TimeoutException ex) {
-                if (index < proxyList.Count-1) {
-                    return ParseProductsFromPage(url);
+            catch (Exception ex) when (ex.Message == "Подключение не установлено, т.к.конечный компьютер отверг запрос на подключение Подключение не установлено, т.к.конечный компьютер отверг запрос на подключение")
+            {
+
+                if (proxyList.Count-1> index)
+                {
+                    proxyList.Remove(proxyList[index]);
+                }
+                ParseProductsFromPage(url,index);
+            }
+            catch (Exception ex)
+            {
+
+                if (index < proxyList.Count - 1)
+                {
+                    index++;
+                    ParseProductsFromPage(url,index++);
                 }
             }
-            return products; 
+            ProxyServerConnectionManagment.SerializeByPuts(proxyList);
         }
  
     }

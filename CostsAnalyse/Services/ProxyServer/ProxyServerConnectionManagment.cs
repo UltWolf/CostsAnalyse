@@ -12,8 +12,10 @@ namespace CostsAnalyse.Services.ProxyServer
     public class ProxyServerConnectionManagment
     {
         private static BinaryFormatter bf;
-        public static void SerialiseProxyServers() {
-            List<String> proxyList = new List<string>();
+        public static   void SerialiseProxyServers(bool IsForce) {
+            if (File.Exists("proxyList.txt") || IsForce)
+            {
+                List<String> proxyList = new List<string>();
                 var httpRequest = (HttpWebRequest)HttpWebRequest.Create("http://foxtools.ru/Proxy?country=RU&al=True&am=True&ah=True&ahs=True&http=True&https=True");
                 httpRequest.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8";
                 httpRequest.KeepAlive = true;
@@ -40,15 +42,25 @@ namespace CostsAnalyse.Services.ProxyServer
                     string port = tds[2].TextContent;
                     proxyList.Add(proxy + ":" + port);
                 }
-            using (FileStream fs = new FileStream("", FileMode.Create, FileAccess.Write)) {
+                using (FileStream fs = new FileStream("proxyList.txt", FileMode.Create, FileAccess.Write))
+                {
+
+                    bf = new BinaryFormatter();
+                    bf.Serialize(fs, proxyList);
+                }
+            }
+        }
+        public static void SerializeByPuts(List<string> hrefs) {
+            using (FileStream fs = new FileStream("proxyList.txt", FileMode.Create, FileAccess.Write))
+            {
 
                 bf = new BinaryFormatter();
-                bf.Serialize(fs, proxyList);
-                }
+                bf.Serialize(fs, hrefs);
+            }
         }
         public static List<string> GetProxyHrefs() {
             List<string> hrefs = new List<string>();
-            using (FileStream fs = new FileStream("", FileMode.Open, FileAccess.Read)){
+            using (FileStream fs = new FileStream("proxyList.txt", FileMode.Open, FileAccess.Read)){
                 bf = new BinaryFormatter();
                 hrefs = (List<string>)bf.Deserialize(fs);
             }

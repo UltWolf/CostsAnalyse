@@ -63,6 +63,7 @@ namespace CostsAnalyse
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             var provider = services.BuildServiceProvider();
             //lately cut`s in another class for initialization
+            StartsInitialize.Initialize();
             DbInitializer dbInitializer = new DbInitializer();
             dbInitializer.Initialize(provider);
             UserInitialize userInitialize = new UserInitialize();

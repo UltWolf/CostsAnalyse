@@ -11,7 +11,7 @@ namespace CostsAnalyse.Services.Parses
 {
     public class FoxtrotParser : IParser
     {
-        public Product GetProduct(string url)
+        public Product GetProduct(string url,int index, ref List<string> proxyList)
         {
             Product product = new Product();
             WebRequest WR = WebRequest.Create(url);
@@ -42,7 +42,7 @@ namespace CostsAnalyse.Services.Parses
             {
                 var currentDiv = DomDocument.GetElementsByClassName("price__relevant");
                 decimal currentPrice = decimal.Parse(currentDiv[0].GetElementsByClassName("numb")[0].TextContent);
-                price = new Price(currentPrice);
+                price = new Price(currentPrice){Company = new Company("Foxtrot", url)};
             }
             product.Price = new List<Price>() { price };
             var divCharacter = DomDocument.GetElementsByClassName("characteristic__block")[0];
@@ -53,7 +53,7 @@ namespace CostsAnalyse.Services.Parses
                 var value = li.GetElementsByTagName("p")[1].TextContent;
                 product.AddInformation(title, new Value { Notice = value }); 
             }
-            product.Company = new Company("Foxtrot", url);
+            
             return product;
 
         }

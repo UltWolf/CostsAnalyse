@@ -10,6 +10,8 @@ using CostsAnalyse.Models.Context;
 using Microsoft.AspNetCore.Authorization;
 using CostsAnalyse.Services;
 using CostsAnalyse.Extensions;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace CostsAnalyse.Controllers
 {
@@ -17,6 +19,7 @@ namespace CostsAnalyse.Controllers
     public class ProductsController : Controller
     {
         private readonly ApplicationContext _context;
+       
 
         public ProductsController(ApplicationContext context)
         {
@@ -25,37 +28,41 @@ namespace CostsAnalyse.Controllers
 
         [AllowAnonymous]
         // GET: Products
-        public async Task<IActionResult> Index([FromRoute]int page= 0)
+        public async Task<IActionResult> Index([FromRoute]int page = 0)
         {
-            var products = this._context.Products.Skip(page * 20).Take(20);
-            return View(products);
+            var userIdentity = (ClaimsIdentity)User.Identity;
+            var claims = userIdentity.Claims;
+            var roleClaimType = userIdentity.RoleClaimType;
+            var roles = claims.Where(c => c.Type == ClaimTypes.Role).ToList();
+             var products = this._context.Products.Skip(page * 20).Take(20).Include(m=> m.Price).Include(m=>m.Information);
+             if(roles.Count>0){
+            if(roles[0].Value.ToLowerInvariant()=="administrator"){
+             return View("IndexAdmin",products);
+            }else{
+            return View("IndexUser",products);
+            }
+             }else{
+                 return View("IndexUser",products);
+             }
         }
-        [Authorize(Roles ="Administrator")]
-        public async Task<IActionResult> AutoAdd() {
-           
+
+
+
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> AutoAdd()
+        {
+
             List<Product> products = new List<Product>();
-             var services = ParsingServicesManager.GetListServices();
-            foreach (var service in services) {
-                products.Add(service.GetProducts());
-            }
-            foreach (var product in products)
+            var services = ParsingServicesManager.GetListServices(_context);
+            foreach (var service in services)
             {
-                var existProduct = _context.Products.First(m=>product.Name == m.Name);
-                if (existProduct == null)
-                {
-                    this._context.Products.Add(product);
-                    this._context.SaveChanges();
-                }
-                else
-                {
-                    existProduct.Price.Add(product.Price[0]);
-                    this._context.Update(existProduct);
-                    this._context.SaveChanges();
-                }
+               service.GetProducts();
             }
+            
             return new JsonResult("Ok");
         }
-        public void InitHrefs() {
+        public void InitHrefs()
+        {
             RozetkaMenuDriver rmd = new RozetkaMenuDriver();
             rmd.getPages();
         }
@@ -71,7 +78,8 @@ namespace CostsAnalyse.Controllers
                 }
                 return NotFound();
             }
-            else {
+            else
+            {
                 return View("InputName");
             }
         }
@@ -84,7 +92,7 @@ namespace CostsAnalyse.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
+            var product = await _context.Products.Include(m=>m.Price).Include(m => m.Information)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {
@@ -95,15 +103,13 @@ namespace CostsAnalyse.Controllers
         }
 
         // GET: Products/Create
-         
+
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Products/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Category")] Product product)
@@ -136,7 +142,7 @@ namespace CostsAnalyse.Controllers
         // POST: Products/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost] 
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Category")] Product product)
         {
@@ -166,7 +172,7 @@ namespace CostsAnalyse.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(product);
-        } 
+        }
         // GET: Products/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -186,7 +192,7 @@ namespace CostsAnalyse.Controllers
         }
 
         // POST: Products/Delete/5
-        [HttpPost, ActionName("Delete")] 
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

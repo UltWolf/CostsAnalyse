@@ -1,69 +1,36 @@
-﻿@model CostsAnalyse.Models.Product
-
-@{
-    ViewData["Title"] = "Details";
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="http://d3js.org/d3.v3.min.js"> </script>
+<style>
+.axis path, .axis line {
+    fill: none;
+    stroke: #333;
 }
+.axis .grid-line {
+    stroke: #000;
+    shape-rendering: crispedges;
+    stroke-opacity: 0.2;
+}
+.axis text {
+    font: 10px Verdana;
+}
+.dot {
+    stroke: steelblue;
+    fill: lightblue;
+}
+</style>
+<body>
+    <button class="Stat" onclick="GetGraph(event)">Get Full statistick</button>
 
-<h2>Details</h2>
-
-<div>
-    <h4>Product</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Category)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Category)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Index)
-        </dt>
-         <dd>
-            @Html.DisplayFor(model => model.Index)
-        </dd>
-             <table border="1">
-   <caption>Information</caption>
-                
-            @foreach(var item in Model.Information){
-                <tr>
-             <td>@Html.DisplayFor(modelItem => item.Key) </td>
-               <td> @Html.DisplayFor(modelItem => item.Value)  </td>
-       </tr>
-            }
-            </table>
-        <table border="1">
-   <caption>Цены</caption>
-                <tr><th>Company</th><th>Prices</th><th>Date</th></tr>
-            @foreach(var item in Model.Price){
-                <tr>
-             <td>@Html.DisplayFor(modelItem => item.Company.Name) </td>
-               <td> @Html.DisplayFor(modelItem => item.OldCost)  </td>
-                <td>@Html.DisplayFor(modelItem =>item.Date)</td>
-       </tr>
-            }
-            </table>
-           
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
-<button onclick="GetCompany(event)"></button>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script type="text/javascript">
-var height = 500; 
-var width = 700;
-var margin = 25; 
+var height = 500; // длина оси Y
+var width = 700; // длина оси X
+var margin = 25; // отступ
 var offset = 10;   
-var svg;
+var svg; //объект svg, который будет содержать визуализацию
 
            function GetGraph(e) {
             e.preventDefault();
@@ -100,8 +67,10 @@ function createAxes(rawData){
 
     var xAxisLength = width - 2 * margin;     
   
+  // длина оси Y = высота контейнера svg - отступ сверху и снизу
   var yAxisLength = height - 2 * margin;
-     
+      
+  // функция интерполяции значений на ось Х  
   var scaleX = d3.time.scale()
                 .domain([new Date(2015, 0, 1),new Date()])
                 .range([0, xAxisLength]);
@@ -110,7 +79,7 @@ function createAxes(rawData){
                 .range([0, yAxisLength]);
                 for(i=0; i<rawData.length; i++)
     data.push({x: scaleX(rawData[i].x)+margin, y: scaleY(rawData[i].y) + margin});
-
+  // создаем ось X   
   var xAxis = d3.svg.axis()
                .scale(scaleX)
                .orient("bottom") 
@@ -120,7 +89,8 @@ function createAxes(rawData){
   var yAxis = d3.svg.axis()
                .scale(scaleY)
                .orient("left");
-             
+                
+   // отрисовка оси               
   svg.append("g")       
        .attr("class", "x-axis")
        .attr("transform",   
@@ -188,25 +158,5 @@ svg.selectAll(".dot")
     .attr("cy", function(d) { return scaleY(d.y)+margin; });
 }
 </script>
-<script>
-    function GetCompany(e) {
-            e.preventDefault();
-            urlArray = window.location.href.split("/");
-            index = urlArray[urlArray.length-1];
-            ajaxUrl = "/api/product/Company/"+index;
-            $.ajax({
-                type: "GET",
-                url: ajaxUrl,
-                cache: false,
-                contentType: false,
-                method: "GET",
-                processData: false,
-                success: function (data) {
-                  console.log(data);
-                },
-                error: function (err) {
-
-                }
-            });
-        };
-</script>
+</body>
+</html>

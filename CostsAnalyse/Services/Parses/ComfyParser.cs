@@ -13,7 +13,7 @@ namespace CostsAnalyse.Services.Parses
 {
     public class ComfyParser : IParser
     {
-        public Product GetProduct(string url)
+        public Product GetProduct(string url,int index, ref List<string> proxyList)
         { 
             Product product = new Product();
             WebRequest WR = WebRequest.Create(url);
@@ -71,7 +71,7 @@ namespace CostsAnalyse.Services.Parses
                     priceString.Append(numbers1[i]);
                 }
                 decimal currentPrice = decimal.Parse(priceString.ToString());
-                price = new Price(currentPrice);
+                price = new Price(currentPrice){Company = new Company("Comfy", url)};
             }
             var TableElement = DomDocument.GetElementById("featuresList");
             var ElementOfTable = DomDocument.GetElementsByClassName("features-item__list-wr");
@@ -81,8 +81,7 @@ namespace CostsAnalyse.Services.Parses
                 var title = item.GetElementsByClassName("title")[0].TextContent;
                 var value = item.GetElementsByClassName("value__item")[0].TextContent;
                 product.AddInformation(title, new Value { Notice = value });
-            }
-            product.Company = new Company("Comfy", url);
+            } 
             return product;
         }
     }

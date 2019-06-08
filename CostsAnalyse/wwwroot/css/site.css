@@ -17,7 +17,27 @@ body {
     font-size: 20px;
     line-height: 1.4;
 }
-
+.container {
+  
+    display: flex;
+    flex-flow: row wrap;
+    align-content: space-between;
+    justify-content: space-between;
+  }
+  .item {
+    display: contents;
+  }
+  .item > div {
+    width: 300px;
+    border: 1px solid black;
+    text-align: center;
+    margin: 10px;
+  }
+  
+  .item:nth-child(3n)::after {
+    content: '';
+    width: 100%;
+  }
 /* Make .svg files in the carousel display properly in older browsers */
 .carousel-inner .item img[src$=".svg"] {
     width: 100%;
