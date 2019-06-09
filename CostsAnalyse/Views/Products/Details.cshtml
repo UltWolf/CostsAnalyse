@@ -9,6 +9,9 @@
 <div>
     <h4>Product</h4>
     <hr />
+     <a asp-action="Details" asp-route-id="model.Id">
+                <img height ="300px"src= @Html.DisplayFor(model => model.UrlImage) >   
+            </a><br>
     <dl class="dl-horizontal">
         <dt>
             @Html.DisplayNameFor(model => model.Name)
@@ -34,22 +37,11 @@
             @foreach(var item in Model.Information){
                 <tr>
              <td>@Html.DisplayFor(modelItem => item.Key) </td>
-               <td> @Html.DisplayFor(modelItem => item.Value)  </td>
+               <td> @Html.DisplayFor(modelItem => item.Value[0].Notice)  </td>
        </tr>
             }
             </table>
-        <table border="1">
-   <caption>Цены</caption>
-                <tr><th>Company</th><th>Prices</th><th>Date</th></tr>
-            @foreach(var item in Model.Price){
-                <tr>
-             <td>@Html.DisplayFor(modelItem => item.Company.Name) </td>
-               <td> @Html.DisplayFor(modelItem => item.OldCost)  </td>
-                <td>@Html.DisplayFor(modelItem =>item.Date)</td>
-       </tr>
-            }
-            </table>
-           
+<div class="infoblock"></div>
     </dl>
 </div>
 <div>
@@ -57,10 +49,23 @@
     <a asp-action="Index">Back to List</a>
 </div>
 <button onclick="GetCompany(event)"></button>
+<button onclick="GetGraph(event)"></button>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://d3js.org/d3.v3.min.js"> </script>
 <script type="text/javascript">
+window.onscroll = function() {
+  var scrolled = window.pageYOffset || document.documentElement.scrollTop; 
+  if((scrolled>0)&&(document.getElementsByClassName("prices").length ==0)){
+      GetCompany(event)
+  }
+  if((scrolled>200)&&(document.getElementsByClassName("statOfPrice").length==0)){
+      GetGraph(event);
+  }
+}
+
 var height = 500; 
-var width = 700;
+var width = 500;
 var margin = 25; 
 var offset = 10;   
 var svg;
@@ -69,7 +74,7 @@ var svg;
             e.preventDefault();
             urlArray = window.location.href.split("/");
             index = urlArray[urlArray.length-1];
-            ajaxUrl = "/api/product/"+index;
+            ajaxUrl = "/api/Price/"+index;
             $.ajax({
                 type: "GET",
                 url: ajaxUrl,
@@ -78,10 +83,9 @@ var svg;
                 method: "GET",
                 processData: false,
                 success: function (data) {
-                    data = [
-        {x: new Date(2015,0,1), y: 67}, {x: new Date(2016,0,1), y: 74},{x: new Date(2017,0,1), y: 63},
-        {x: new Date(2018,0,1), y: 56}, {x: new Date(2019,0,1), y: 24}
-    ],
+                    
+                   data =  data[0].price;
+             
                     createAxes(data);
                 },
                 error: function (err) {
@@ -90,31 +94,38 @@ var svg;
             });
         };
 function createAxes(rawData){
-  
+    var div =  document.createElement("div");
+    div.setAttribute("class","statOfPrice");
+    document.getElementsByClassName("infoblock")[0].append(div);
     data=[];
-    svg = d3.select("body").append("svg")
+   
+    svg = d3.select(".statOfPrice").append("svg")
     .attr("class", "axis")
     .attr("width", width)
-    .attr("height", height);
-    
+    .attr("height", height); 
 
     var xAxisLength = width - 2 * margin;     
   
   var yAxisLength = height - 2 * margin;
      
   var scaleX = d3.time.scale()
+                .domain([
+                new Date(rawData[0].date.split("-")[0],rawData[0].date.split("-")[1]),
+                new Date()])
                 .domain([new Date(2015, 0, 1),new Date()])
                 .range([0, xAxisLength]);
   var scaleY = d3.scale.linear()
                  .domain([100, 0])
                 .range([0, yAxisLength]);
-                for(i=0; i<rawData.length; i++)
-    data.push({x: scaleX(rawData[i].x)+margin, y: scaleY(rawData[i].y) + margin});
-
+   
+                for(i=0; i<rawData.length; i++){
+    data.push({x: scaleX(new Date(rawData[0].date.split("-")[0],rawData[0].date.split("-")[1]),0)+margin, y: scaleY(rawData[0].cost) + margin});
+            }
+              
   var xAxis = d3.svg.axis()
                .scale(scaleX)
                .orient("bottom") 
-               .ticks(9)
+               .ticks(4)
                .tickFormat(d3.time.format('%m.%y'))
                ;    
   var yAxis = d3.svg.axis()
@@ -180,7 +191,7 @@ g.append("text")
     .style("font-size", "11px")
     .text("Date"); 
 svg.selectAll(".dot")
-    .data(rawData)
+    .data(data)
     .enter().append("circle")
     .attr("class", "dot")
     .attr("r", 3.5)
@@ -193,7 +204,7 @@ svg.selectAll(".dot")
             e.preventDefault();
             urlArray = window.location.href.split("/");
             index = urlArray[urlArray.length-1];
-            ajaxUrl = "/api/product/Company/"+index;
+            ajaxUrl = "/api/Price/"+index;
             $.ajax({
                 type: "GET",
                 url: ajaxUrl,
@@ -201,8 +212,25 @@ svg.selectAll(".dot")
                 contentType: false,
                 method: "GET",
                 processData: false,
-                success: function (data) {
-                  console.log(data);
+                success: function (data) { 
+                  var price = data[0].lastPrice[0];
+                  var urlImage = "";
+                  if(price.company.name=="Rozetka"){
+                     urlImage="<img src=\"https://taradajko.com/wp-content/uploads/2016/11/unnamed.png\">";
+                  }
+                  var src = "<a href="+price.company.url+">"+urlImage+"</a>"
+                  var table = `
+                  <table border=\"1\"><caption>Цены</caption>
+                <tr><th>Company</th><th>Prices</th><th>Date</th></tr>
+                <tr>
+           
+                <td>`+src+`</td>
+                  <td>`+price.cost+`</td>
+               <td>`+price.date +` </td>
+               </tr>
+            </table>`;
+                  var div = "<div class=\"prices\">"+table+"</div>"
+                  document.getElementsByClassName("infoblock")[0].innerHTML = div;
                 },
                 error: function (err) {
 

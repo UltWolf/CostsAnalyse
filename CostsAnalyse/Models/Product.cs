@@ -30,9 +30,10 @@ namespace CostsAnalyse.Models
         public string Name { get; set; }
         public string Category { get; set; }
         public string UrlImage{get;set;}
-        public int Index{get;set;}
+        public string Index{get;set;}
         public ICollection<Information> Information { get; set; }
         public List<Price> LastPrice { get; set; }
+ 
         public List<Price> Price { get; set; }
       
         

@@ -1,4 +1,5 @@
 ﻿using CostsAnalyse.Services.Parses;
+using CostsAnalyse.Services.ProxyServer;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,7 +13,8 @@ namespace TestsForCostsAnalyse.Tests.ParsersTests.AlloTests
         public void ProductAreNotNull()
         {
             AlloParser cp = new AlloParser();
-            Assert.NotNull(cp.GetProduct("https://allo.ua/ua/products/mobile/samsung-galaxy-a7-2018-pink-sm-a750fziusek.html"));
+            List<String> proxys = ProxyServerConnectionManagment.GetProxyHrefs();
+            Assert.NotNull(cp.GetProduct("https://allo.ua/ua/products/mobile/samsung-galaxy-a7-2018-pink-sm-a750fziusek.html",0,ref proxys));
 
         }
     }

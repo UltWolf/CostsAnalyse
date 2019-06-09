@@ -10,7 +10,7 @@ namespace CostsAnalyse.Models
     {
         public int Id { get; set; }
   
-        public Product product{get;set;}
+        
         public Price() { }
         public Price(decimal cost ) {
             this.Cost = cost;
@@ -50,7 +50,7 @@ namespace CostsAnalyse.Models
         public decimal Cost { get; set; }
         public bool IsDiscont { get; set; }
         public decimal OldCost { get; set; }
-        public float? Discont{get;set;}
+        public decimal? Discont{get;set;}
         public DateTime Date { get; set; }
         public Company Company { get; set; }
         

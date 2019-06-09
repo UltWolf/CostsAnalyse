@@ -1,4 +1,5 @@
 ﻿using CostsAnalyse.Services.Parses;
+using CostsAnalyse.Services.ProxyServer;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,7 +13,8 @@ namespace TestsForCostsAnalyse.Tests.ParsersTests.ComfyTest
         public void ProductAreNotNull()
         {
             ComfyParser cp = new ComfyParser();
-            Assert.NotNull(cp.GetProduct("https://comfy.ua/stiral-naja-mashina-lg-fh0b8nd1.html"));
+            List<String> proxys = ProxyServerConnectionManagment.GetProxyHrefs();
+            Assert.NotNull(cp.GetProduct("https://comfy.ua/stiral-naja-mashina-lg-fh0b8nd1.html",0,ref proxys));
 
         }
     }

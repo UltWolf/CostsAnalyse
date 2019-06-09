@@ -58,7 +58,7 @@ namespace CostsAnalyse
                 configure.LogoutPath = "/user/logoff";
             });
             services.AddDbContext<ApplicationContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("StringConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("StringConnection"), x => x.MigrationsAssembly("CostsAnalyse")));
              
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             var provider = services.BuildServiceProvider();

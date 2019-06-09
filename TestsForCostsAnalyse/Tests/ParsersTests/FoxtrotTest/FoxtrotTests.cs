@@ -1,4 +1,5 @@
 ﻿using CostsAnalyse.Services.Parses;
+using CostsAnalyse.Services.ProxyServer;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,7 +13,8 @@ namespace TestsForCostsAnalyse.Tests.ParsersTests.FoxtrotTest
         public void ListProductsAreNotNull()
         {
             FoxtrotParser rpd = new FoxtrotParser();
-            Assert.NotNull(rpd.GetProduct("https://www.foxtrot.com.ua/ru/shop/mobilnye_telefony_samsung_sm-j320h-galaxy-j3-duos-zdd-gold.html?sc_content=13870_2"));
+            List<String> proxys = ProxyServerConnectionManagment.GetProxyHrefs();
+            Assert.NotNull(rpd.GetProduct("https://www.foxtrot.com.ua/ru/shop/mobilnye_telefony_samsung_sm-j320h-galaxy-j3-duos-zdd-gold.html?sc_content=13870_2",0,ref proxys));
 
         }
     }

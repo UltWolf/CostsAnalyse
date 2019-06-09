@@ -1,4 +1,5 @@
 ﻿using CostsAnalyse.Services.Parses;
+using CostsAnalyse.Services.ProxyServer;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,7 +12,8 @@ namespace TestsForCostsAnalyse.Tests.ParsersTests
         [Fact]
         public void ProductAreNotNull()
         {   RozetkaParser rp = new RozetkaParser();
-            Assert.NotNull(rp.GetProduct("https://rozetka.com.ua/lenovo_tab4_za310144ua/p31091351/"));
+
+            Assert.NotNull(rp.GetProductWithoutProxy("https://rozetka.com.ua/lenovo_tab4_za310144ua/p31091351/"));
 
         }
     }

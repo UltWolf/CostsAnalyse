@@ -92,7 +92,9 @@ namespace CostsAnalyse.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products.Include(m=>m.Price).Include(m => m.Information)
+            var product = await _context.Products.Include(m=>m.Price)
+                .Include(m => m.Information)
+                .ThenInclude(s=>s.Value)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {
