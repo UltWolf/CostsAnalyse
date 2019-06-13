@@ -3,6 +3,7 @@ using AngleSharp.Html.Parser;
 using CostsAnalyse.Extensions;
 using CostsAnalyse.Models;
 using CostsAnalyse.Models.Context;
+using CostsAnalyse.Services.MenuDrivers;
 using CostsAnalyse.Services.Parses;
 using CostsAnalyse.Services.ProxyServer;
 using System;
@@ -203,7 +204,7 @@ namespace CostsAnalyse.Services.PageDrivers
         public void GenerateHrefs()
         {
             if (!File.Exists("FoxtrotHrefs.txt")) {
-                RozetkaMenuDriver RMD = new RozetkaMenuDriver();
+                FoxtrotMenuDriver RMD = new FoxtrotMenuDriver();
                 RMD.GetPagesAuto();
             }
         }
