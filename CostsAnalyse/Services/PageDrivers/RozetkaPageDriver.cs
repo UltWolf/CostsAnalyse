@@ -22,6 +22,7 @@ namespace CostsAnalyse.Services.PageDrivers
         public RozetkaPageDriver(ApplicationContext Context) {
             this.proxyList = ProxyServerConnectionManagment.GetProxyHrefs();
             this._context = Context;
+            GenerateHrefs();
         }
         public HashSet<String> GetPages() {
             HashSet<String> pages ;
@@ -79,13 +80,15 @@ namespace CostsAnalyse.Services.PageDrivers
                     try
                     {
                         string urlForPage = div.GetElementsByClassName("g-i-tile-i-title")[0].GetElementsByTagName("a")[0].GetAttribute("href");
-                        
-                        var product = rp.GetProduct(urlForPage,0,ref proxyList);
+                        var product = rp.GetProduct(urlForPage,ref proxyList);
+                        if(!product.IsNull()){
                         var productFromContext = _context.Products.FirstOrDefault(m=> m.Index == product.Index);
+                        var currentCost = product.LastPrice[0].Cost;
                         if(productFromContext ==null){
                             product.Price = product.LastPrice;
+                            product.Min = currentCost;
+                            product.Max = currentCost;
                             _context.Add(product);
-                            _context.SaveChanges();
                         }else{
                             productFromContext.Price.Add(product.LastPrice);
                             var  lastPrice = productFromContext.LastPrice.FirstOrDefault(m=>m.Company.Equals(product.LastPrice[0].Company));
@@ -94,7 +97,14 @@ namespace CostsAnalyse.Services.PageDrivers
                             }else{
                                 productFromContext.LastPrice.Add(product.LastPrice[0]);
                             }
+                            if(currentCost>productFromContext.Max){
+                                productFromContext.Max = currentCost;
+                            }else if(currentCost< productFromContext.Min){
+                                productFromContext.Min = currentCost;
+                            }
                             _context.Products.Update(productFromContext);
+                        }
+                        
                             _context.SaveChanges();
                         }
                         
@@ -124,6 +134,13 @@ namespace CostsAnalyse.Services.PageDrivers
             }
             ProxyServerConnectionManagment.SerializeByPuts(proxyList);
         }
- 
+
+        public void GenerateHrefs()
+        {
+            if (!File.Exists("RozetkaHrefs.txt")) {
+                RozetkaMenuDriver RMD = new RozetkaMenuDriver();
+                RMD.GetPagesAuto();
+            }
+        }
     }
 }

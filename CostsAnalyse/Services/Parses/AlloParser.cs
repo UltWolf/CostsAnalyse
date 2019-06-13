@@ -13,7 +13,7 @@ namespace CostsAnalyse.Services.Parses
 {
     public class AlloParser : IParser
     {
-        public Product GetProduct(string url,int index, ref List<string> proxyList)
+        public Product GetProduct(string url,ref List<string> proxyList)
         {
             Product product = new Product();
             WebRequest WR = WebRequest.Create(url+ "?tab=specs");
@@ -75,6 +75,7 @@ namespace CostsAnalyse.Services.Parses
                 product.AddInformation(title, new Value { Notice = value });
             } 
             product.Price = new List<Price>() { price };
+            product.Index = product.Name.Split("(")[1].Split(")")[0];
             return product;
         }
     }

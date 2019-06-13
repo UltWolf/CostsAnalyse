@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web.Helpers;
 using AngleSharp.Html.Parser;
 using CostsAnalyse.Models;
 using CostsAnalyse.Services.ProxyServer;
@@ -17,37 +18,26 @@ namespace CostsAnalyse.Services.Parses
         public RozetkaParser()
         {
         }
-        public Product GetProduct(string url, int index, ref List<string> proxyList)
+        public Product GetProduct(string url, ref List<string> proxyList)
         {
             ThreadDelay.Delay();
             var splitedUrl = url.Split('/');
             var ProductId = splitedUrl[splitedUrl.Length - 2].Remove(0, 1);
             string ApiUrl = "https://rozetka.com.ua/recent_recommends/action=getGoodsDetailsJSON/?goods_ids=" + ProductId;
             Product product = new Product();
-            try
+            foreach (var proxy in proxyList)
             {
-                WebRequest WR = WebRequest.Create(ApiUrl);
-                WR.Method = "GET";
-                SetProxy(ref WR, index, ref proxyList);
-                product = GetProductInstance(WR, url);
-                return product;
-            }
-            catch (Exception ex) when ((ex.Message == "Подключение не установлено, т.к.конечный компьютер отверг запрос на подключение Подключение не установлено, т.к.конечный компьютер отверг запрос на подключение") || (ex.Message == "The remote server returned an error: (503) Too many open connections."))
-            {
-
-                if (proxyList.Count - 1 > index)
+                try
                 {
-                    proxyList.Remove(proxyList[index]);
+                    WebRequest WR = WebRequest.Create(ApiUrl);
+                    WR.Method = "GET";
+                    SetProxy(ref WR,  proxy);
+                    product = GetProductInstance(WR, url);
+                    return product;
                 }
-                return GetProduct(url, index, ref proxyList);
-            }
-            catch (Exception ex)
-            {
-
-                if (index < proxyList.Count - 1)
+                catch (Exception ex)
                 {
-                    index++;
-                    return GetProduct(url, index++, ref proxyList);
+
                 }
             }
             ProxyServerConnectionManagment.SerializeByPuts(proxyList);
@@ -67,56 +57,34 @@ namespace CostsAnalyse.Services.Parses
 
             return product;
         }
-        public void SetProxy(ref WebRequest wr, int index, ref List<string> proxyList)
+        public void SetProxy(ref WebRequest wr,  string proxy)
         {
-            string[] fulladress = proxyList[++index].Split(":");
+            string[] fulladress = proxy.Split(":");
             var (adress, port) = (fulladress[0], int.Parse(fulladress[1]));
-            WebProxy proxy = new WebProxy(adress, port);
-            proxy.BypassProxyOnLocal = false;
-            wr.Proxy = proxy;
+            WebProxy prox = new WebProxy(adress, port);
+            prox.BypassProxyOnLocal = false;
+            wr.Proxy = prox;
 
         }
         public Product GetProductInstance(WebRequest WR,string url) {
 
             Product product = new Product();
             WebResponse response = WR.GetResponse();
-            ParseRozetkaElement html;
+            string json;
             using (Stream stream = response.GetResponseStream())
             {
                 using (StreamReader reader = new StreamReader(stream))
                 {
-                    string json = reader.ReadToEnd();
                     try
                     {
-                        html = JsonConvert.DeserializeObject<ParseRozetkaElement>(json);
+                        json = reader.ReadToEnd();
                     }
-                    catch (Exception)
-                    {
+                    catch (Exception ex) {
                         return null;
                     }
                 }
             }
-            product.Name = html.content[0].content.title_only;
-            product.Index = product.Name.Split("(")[1].Split(")")[0];
-            try
-            {
-                int oldPrice = html.content[0].content.old_price;
-                decimal price = decimal.Parse(html.content[0].content.price);
-
-                product.LastPrice = new List<Price>() { new Price(
-                    price,
-                    oldPrice,
-                    new Company("Rozetka", url))
-                    { IsDiscont=true,
-                     Discont =  Math.Truncate((1-(price/oldPrice))*100)} };
-
-            }
-            catch (Exception ex)
-            {
-                product.LastPrice = new List<Price>() { new Price(decimal.Parse(html.content[0].content.price), new Company("Rozetka", url)) };
-            }
-            product.UrlImage = html.content[0].content.large_image.url;
-            product.Category = html.content[0].content.parent_title;
+            product = RozetkaDynamicJSONParser.GetProductFromJson(json,url);
             GetCharacteristics(WR, url, ref product);
             return product;
         }

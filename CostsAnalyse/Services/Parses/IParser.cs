@@ -5,7 +5,7 @@ namespace CostsAnalyse.Services.Parses
 {
     public interface IParser
     {
-        Product GetProduct(string url,int index,ref List<string> proxyList);
+        Product GetProduct(string url,ref List<string> proxyList);
         
     }
 }

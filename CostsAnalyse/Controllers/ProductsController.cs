@@ -19,12 +19,14 @@ namespace CostsAnalyse.Controllers
     public class ProductsController : Controller
     {
         private readonly ApplicationContext _context;
-       
+       private readonly UserManager<UserApp> _userManager;
 
-        public ProductsController(ApplicationContext context)
+        public ProductsController(ApplicationContext context, UserManager<UserApp> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
+        private Task<UserApp> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
         [AllowAnonymous]
         // GET: Products
@@ -34,7 +36,7 @@ namespace CostsAnalyse.Controllers
             var claims = userIdentity.Claims;
             var roleClaimType = userIdentity.RoleClaimType;
             var roles = claims.Where(c => c.Type == ClaimTypes.Role).ToList();
-             var products = this._context.Products.Skip(page * 20).Take(20).Include(m=> m.Price).Include(m=>m.Information);
+             var products = this._context.Products.Skip(page * 20).Take(20).Include(m=> m.Price).Include(m=>m.Information).ToList();
              if(roles.Count>0){
             if(roles[0].Value.ToLowerInvariant()=="administrator"){
              return View("IndexAdmin",products);
@@ -83,6 +85,25 @@ namespace CostsAnalyse.Controllers
                 return View("InputName");
             }
         }
+        [HttpGet("Subscribe/{id}")]
+        public async Task<IActionResult> Subscribe(int id){
+
+           var product = _context.Products.First(m=> m.Id==id);
+           if(product!=null){
+               var user = await GetCurrentUserAsync();
+               var userId = user?.Id;
+               if(userId !=null){
+                    UserProduct UP = new UserProduct();
+                    UP.Products = product;
+                    UP.Users = user;
+               product.Subscribers.Add(UP);
+               _context.Update(product);
+               await _context.SaveChangesAsync();
+                return Ok();
+               }
+           }
+            return BadRequest();
+        }
         [AllowAnonymous]
         // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -103,9 +124,7 @@ namespace CostsAnalyse.Controllers
 
             return View(product);
         }
-
-        // GET: Products/Create
-
+          
         public IActionResult Create()
         {
             return View();
@@ -124,8 +143,7 @@ namespace CostsAnalyse.Controllers
             }
             return View(product);
         }
-
-        // GET: Products/Edit/5 
+ 
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -140,10 +158,7 @@ namespace CostsAnalyse.Controllers
             }
             return View(product);
         }
-
-        // POST: Products/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+         
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Category")] Product product)
@@ -174,8 +189,8 @@ namespace CostsAnalyse.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(product);
-        }
-        // GET: Products/Delete/5
+        } 
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

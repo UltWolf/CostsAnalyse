@@ -20,8 +20,24 @@ namespace CostsAnalyse.Models.Context
         public ApplicationContext(DbContextOptions<ApplicationContext> dbContext) : base(dbContext)
         {
 
-        } 
-   
+        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<UserProduct>().HasKey(k => new { k.IdUserapp, k.IdProduct });
+
+            modelBuilder.Entity<UserProduct>()
+                .HasOne(x => x.Users)
+                .WithMany(x => x.products)
+                .HasForeignKey(x => x.IdUserapp);
+
+            modelBuilder.Entity<UserProduct>()
+               .HasOne(x => x.Products)
+               .WithMany(x => x.Subscribers)
+               .HasForeignKey(x => x.IdProduct);
+
+            base.OnModelCreating(modelBuilder);
+        }
+
         public DbSet<Company> Companies { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Changes> Changes{get;set;}

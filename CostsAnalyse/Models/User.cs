@@ -12,7 +12,7 @@ namespace CostsAnalyse.Models
         public int Year { get; set; }
         [PersonalData]
         public string Country { get; set; } 
-        public List<Product> products { get; set; }
+        public List<UserProduct> products { get; set; }
 
     }
 }

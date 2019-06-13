@@ -21,7 +21,11 @@
             <a asp-action="Details" asp-route-id="@item.Id">
                 <img src= @Html.DisplayFor(modelItem => item.UrlImage)>   
             </a><br>
-               
+                @Html.DisplayFor(modelItem => item.Price[item.Price.Count-1].Cost);
+                 @if(item.Price[item.Price.Count-1].IsDiscont){
+
+ @Html.DisplayFor(modelItem => item.Price[item.Price.Count-1].OldCost);
+                }
          </div>
         </div>
 }

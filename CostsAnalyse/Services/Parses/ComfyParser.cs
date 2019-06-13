@@ -13,7 +13,7 @@ namespace CostsAnalyse.Services.Parses
 {
     public class ComfyParser : IParser
     {
-        public Product GetProduct(string url,int index, ref List<string> proxyList)
+        public Product GetProduct(string url,ref List<string> proxyList)
         { 
             Product product = new Product();
             WebRequest WR = WebRequest.Create(url);

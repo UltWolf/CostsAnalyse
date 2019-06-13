@@ -13,7 +13,7 @@ namespace TestsForCostsAnalyse.Tests.ParsersTests.AlloTests
         public void ProductAreNotNull()
         {
             AlloParser cp = new AlloParser();
-            List<String> proxys = ProxyServerConnectionManagment.GetProxyHrefs();
+            List<String> proxys = new List<String>();
             Assert.NotNull(cp.GetProduct("https://allo.ua/ua/products/mobile/samsung-galaxy-a7-2018-pink-sm-a750fziusek.html",0,ref proxys));
 
         }

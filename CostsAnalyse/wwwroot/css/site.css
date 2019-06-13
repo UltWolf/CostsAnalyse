@@ -1,6 +1,7 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\ 
 for details on configuring this project to bundle and minify static web assets. */
 body {
+  
     padding-top: 50px;
     padding-bottom: 20px;
 }
@@ -11,14 +12,9 @@ body {
     padding-left: 15px;
     padding-right: 15px;
 }
-
-/* Carousel */
-.carousel-caption p {
-    font-size: 20px;
-    line-height: 1.4;
-}
+ 
 .container {
-  
+   
     display: flex;
     flex-flow: row wrap;
     align-content: space-between;
@@ -38,14 +34,50 @@ body {
     content: '';
     width: 100%;
   }
-/* Make .svg files in the carousel display properly in older browsers */
-.carousel-inner .item img[src$=".svg"] {
-    width: 100%;
-}
-
+ 
 /* QR code generator */
 #qrCode {
     margin: 15px;
+}
+.navbar-inverse{
+  background-color:transparent;
+  border-color: transparent;
+}
+.navbar-inverse .navbar-nav > li  {
+  color: #fff;
+line-height: 48px;
+text-align: center;
+width: 200px;
+border-radius: 8px;
+background: transparent;
+    background-image: none;
+background-image: -webkit-radial-gradient(left bottom , circle cover, rgba(255, 255, 255,0.3) 10%, rgba(255, 255, 250, 0.1) 50%);
+display: block;
+padding: 10px 20px 10px 20px;
+text-decoration: none;
+border-color: black;
+border-bottom: 2px black solid;
+border-left: 1px rgba(10,10,10,0.9) solid;
+margin: 10px;
+-webkit-box-shadow: -8px 4px 5px 0px rgba(0,0,0,0.75);
+-moz-box-shadow: -8px 4px 5px 0px rgba(0,0,0,0.75);
+box-shadow: -8px 4px 5px 0px rgba(0,0,0,0.75);
+
+}
+.navbar-inverse .navbar-nav > li:hover {
+  background-image: -webkit-radial-gradient(right top , circle cover, rgba(255, 255, 255,0.3) 10%, rgba(255, 255, 250, 0.1) 50%);
+  -webkit-box-shadow: 8px -4px 5px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 8px -4px 5px 0px rgba(0,0,0,0.75);
+  box-shadow: 8px -4px 5px 0px rgba(0,0,0,0.75);
+  transition: 0.5s;
+  border-bottom: 0px black solid;
+border-left: 0px rgba(10,10,10,0.9) solid;
+border-right: 2px black solid;
+border-top: 1px rgba(10,10,10,0.9) solid;
+}
+.navbar-inverse .navbar-nav > li > a{
+  color: white;
+text-shadow: 2px 0 0 black ;
 }
 
 /* Hide/rearrange for smaller screens */

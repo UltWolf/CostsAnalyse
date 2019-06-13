@@ -11,9 +11,10 @@ namespace CostsAnalyse.Services.Parses
 {
     public class FoxtrotParser : IParser
     {
-        public Product GetProduct(string url,int index, ref List<string> proxyList)
+        public Product GetProduct(string url,ref List<string> proxyList)
         {
             Product product = new Product();
+            url = "https://www.foxtrot.com.ua" + url;
             WebRequest WR = WebRequest.Create(url);
             WR.Method = "GET"; 
             WR.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:65.0) Gecko/20100101 Firefox/65.0");
@@ -28,23 +29,8 @@ namespace CostsAnalyse.Services.Parses
                 }
             }
             HtmlParser parser = new HtmlParser();
-            var DomDocument = parser.ParseDocument(html);
-            var discont = DomDocument.GetElementsByClassName("price__not-relevant");
-            Price price;
-            if (discont != null)
-            {
-                decimal oldPrice = decimal.Parse(discont[0].GetElementsByClassName("numb")[0].TextContent);
-                var  currentDiv = DomDocument.GetElementsByClassName("price__relevant");
-                decimal currentPrice = decimal.Parse(currentDiv[0].GetElementsByClassName("numb")[0].TextContent);
-                price = new Price(oldPrice, currentPrice);
-            }
-            else
-            {
-                var currentDiv = DomDocument.GetElementsByClassName("price__relevant");
-                decimal currentPrice = decimal.Parse(currentDiv[0].GetElementsByClassName("numb")[0].TextContent);
-                price = new Price(currentPrice){Company = new Company("Foxtrot", url)};
-            }
-            product.Price = new List<Price>() { price };
+            var DomDocument = parser.ParseDocument(html); 
+            
             var divCharacter = DomDocument.GetElementsByClassName("characteristic__block")[0];
             var lis = divCharacter.GetElementsByTagName("li");
             foreach(var li in lis)

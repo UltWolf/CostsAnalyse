@@ -9,7 +9,7 @@
 <div>
     <h4>Product</h4>
     <hr />
-     <a asp-action="Details" asp-route-id="model.Id">
+     <a asp-action="Details" asp-route-id="@Model.Id">
                 <img height ="300px"src= @Html.DisplayFor(model => model.UrlImage) >   
             </a><br>
     <dl class="dl-horizontal">
@@ -48,8 +48,7 @@
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
-<button onclick="GetCompany(event)"></button>
-<button onclick="GetGraph(event)"></button>
+
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://d3js.org/d3.v3.min.js"> </script>
@@ -94,6 +93,7 @@ var svg;
             });
         };
 function createAxes(rawData){
+    if(document.getElementsByClassName("statOfPrice").length==0){
     var div =  document.createElement("div");
     div.setAttribute("class","statOfPrice");
     document.getElementsByClassName("infoblock")[0].append(div);
@@ -198,6 +198,7 @@ svg.selectAll(".dot")
     .attr("cx", function(d) { return scaleX(d.x)+margin; })
     .attr("cy", function(d) { return scaleY(d.y)+margin; });
 }
+}
 </script>
 <script>
     function GetCompany(e) {
@@ -215,25 +216,27 @@ svg.selectAll(".dot")
                 success: function (data) { 
                   var price = data[0].lastPrice[0];
                   var urlImage = "";
+                  
                   if(price.company.name=="Rozetka"){
                      urlImage="<img src=\"https://taradajko.com/wp-content/uploads/2016/11/unnamed.png\">";
                   }
                   var src = "<a href="+price.company.url+">"+urlImage+"</a>"
+                  if(price.isDiscont){
+                  var cost = "<p>"+price.cost+"</p>"+"<p>"+ price.discont +"% </p>"+"<p>"+ price.oldCost +"</p>"
+                  }
                   var table = `
                   <table border=\"1\"><caption>Цены</caption>
                 <tr><th>Company</th><th>Prices</th><th>Date</th></tr>
                 <tr>
-           
                 <td>`+src+`</td>
-                  <td>`+price.cost+`</td>
-               <td>`+price.date +` </td>
+                  <td>`+cost+`</td>
+               <td>`+ new Date(price.date).toLocaleDateString() +` </td>
                </tr>
             </table>`;
                   var div = "<div class=\"prices\">"+table+"</div>"
                   document.getElementsByClassName("infoblock")[0].innerHTML = div;
                 },
                 error: function (err) {
-
                 }
             });
         };

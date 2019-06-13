@@ -26,11 +26,17 @@ namespace CostsAnalyse.Models
             }
             this.Information.Add(information); 
         }
+        public bool IsNull(){
+            return ((Name =="") && (Index==""));
+        }
         public int Id { get; set; }
         public string Name { get; set; }
         public string Category { get; set; }
         public string UrlImage{get;set;}
         public string Index{get;set;}
+        public  decimal Max{get;set;} = 0;
+        public  decimal Min{get;set;} = 0;
+        public List<UserProduct> Subscribers{get;set;} 
         public ICollection<Information> Information { get; set; }
         public List<Price> LastPrice { get; set; }
  

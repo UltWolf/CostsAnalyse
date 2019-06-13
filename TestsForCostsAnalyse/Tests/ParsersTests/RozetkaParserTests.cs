@@ -16,5 +16,10 @@ namespace TestsForCostsAnalyse.Tests.ParsersTests
             Assert.NotNull(rp.GetProductWithoutProxy("https://rozetka.com.ua/lenovo_tab4_za310144ua/p31091351/"));
 
         }
+        [Fact]
+        public void ProductWithoutDiscontAreNotNull()
+        {
+            Assert.NotNull(new RozetkaParser().GetProductWithoutProxy("https://rozetka.com.ua/ua/asus_d540na_gq211t/p70599548/"));
+        }
     }
 }

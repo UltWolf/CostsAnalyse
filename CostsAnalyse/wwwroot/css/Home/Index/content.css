@@ -1,0 +1,52 @@
+.promote{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+color: white;
+margin-top: 60px;
+background: rgba(0,0,0,0.6);
+
+border: 3px black solid;
+
+border-radius: 2px;
+padding: 2% 10% 8% 10%;
+}
+.promote>ul{
+    margin-top: 60px;
+    text-align: justify;
+margin-left: 50%;
+margin-right: 50%;
+width: 400px;
+}
+.promote>ul>li{
+    list-style-image: url("http://sickroof.com/wp-content/uploads/2016/10/checkmark_25x25.png") ;
+    margin: 15px;
+}
+.promote>.go_to_href>p{
+    margin: 50px;
+}
+.promote>.go_to_href>a{
+     background:rgba(0,0,0,0.6);
+     padding: 15px 5px 15px 5px;
+     color: white
+
+}
+.promote>.go_to_href>div>img{
+        position: absolute;
+        clip: rect(50px, 400px, 70px, 0px);
+        height: 120px;
+        margin-left: -19%;
+}
+.promote>.go_to_href>div>a{
+    position: absolute;
+margin-top: 40px;
+margin-left: -100px;
+color: white;
+text-shadow: red -1px 2px 0;
+}
+body{
+    background-image: url("/images/back.jpg");
+}

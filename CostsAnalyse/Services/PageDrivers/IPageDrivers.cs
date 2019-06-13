@@ -11,6 +11,7 @@ namespace CostsAnalyse.Services.PageDrivers
         HashSet<String> GetPages();
         void ParseProductsFromPage(string url,int index);
         void GetProducts();
+        void GenerateHrefs();
 
 
     }
