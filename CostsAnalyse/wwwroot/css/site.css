@@ -1,9 +1,6 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\ 
 for details on configuring this project to bundle and minify static web assets. */
-body {
-  
-    padding-top: 50px;
-    padding-bottom: 20px;
+body { 
 }
 
 /* Wrapping element */
@@ -39,9 +36,11 @@ body {
 #qrCode {
     margin: 15px;
 }
-.navbar-inverse{
-  background-color:transparent;
+.navbar-inverse{ 
+  background-color: transparent;
   border-color: transparent;
+  margin: 0px;
+  padding: 60px;
 }
 .navbar-inverse .navbar-nav > li  {
   color: #fff;

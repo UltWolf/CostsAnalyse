@@ -2,19 +2,44 @@
     ViewData["Title"] = "Home Page";
 }
 <link rel="stylesheet" href="~/css/home/index/content.css" />
-<div class="promote">   <h1>Ласково просимо до нашого сервісу</h1>
+<div class="promote">   <h1 style="margin-bottom:120px">Ласково просимо до нашого сервісу</h1>
 
-    <ul>
-    <li>Будь завжди в курсі актуальних цін та знижок</li>
-   <li>Та при цьому не будь обманутим</li>
-   <li>Залучись максимальною прозорістю</li>
-   </ul>
-   <div class="go_to_href">
-  
-   <div style="position:relative;height:100px">
-        <a asp-controller="products" asp-action="Index">GET OVER HERE</a><br>
-   <img src="images/get_over_div.png">
+    <div><img src="images/pc1.png" style="float:left"><p>Будь завжди в курсі актуальних цін та знижок</p>
+    <div class="spacer" style="clear: both;"></div></div>
+
+   <div><img src="images/pc2.png" style="float:right"><p>Та при цьому не будь обманутим</p> 
+   <div class="spacer" style="clear: both;"></div></div>
+   <div><div style="width:100%"><img src="images/pc3.png"></div><p>Залучись максимальною прозорістю</p></div>
+   </ul> 
+   <div class="register_but">
+        <a asp-controller="products" asp-action="Index">Долучитися </a> <br>  
    </div>
    </div>
-   </div>
+   <div class="spacer_between_smart"></div>
+<div class="smartphone">
+    <h1>Мобільний додаток</h1>
+    <div id="block_cons">
+        <img src="images/smart1.png" width="900px" style="float:left">
+    <ul  >
+        <li>Не подобається, що сайт не є адаптивним?</li>
+        <li>Не має змоги постійно з'єднуватись з інтернетом?</li>
+        <li>Браузер в останній час неправильно функціонує?</li>
+    </ul>
+     <div class="spacer" style="clear: both;"></div>
+    </div>
+    <h1>Завантажте мобільний додаток</h1>
+    <div id="block_pros">
+        <img src="images/smart2.png" width="600px" style="transform: scale(-1, 1);float:right">
+    <ul  >
+        <li>Майте доступ незалежно від інтернету</li>
+        <li>Майте змогу хешувати ціни </li>
+        <li>Отримуйте рекомендації в фоновому режимі щодо покупки прямо в вашому телефоні</li>
+    </ul>
+     <div class="spacer" style="clear: both;"></div>
+    </div>
+    <div>
+        <a><img src="images/gplay_but.png" ></a> 
+            </div>
+</div>
+ 
  

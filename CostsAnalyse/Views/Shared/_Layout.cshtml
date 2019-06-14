@@ -42,6 +42,7 @@
                     <li><a asp-area="" asp-controller="User" asp-action="Login">Вхід</a></li>
 }else{
        <li><a asp-area="" asp-controller="User" asp-action="Register">Профіль</a></li> 
+         <li><a asp-area="" asp-controller="User" asp-action="LogOff">Вийти </a></li> 
 }
                 </ul>
             </div>
@@ -51,8 +52,7 @@
     <partial name="_CookieConsentPartial" />
 
     <div class="container body-content">
-        @RenderBody()
-        <hr />
+        @RenderBody() 
         <footer>
             <p>&copy; 2019 - CostsAnalyse</p>
         </footer>

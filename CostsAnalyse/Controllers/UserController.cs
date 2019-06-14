@@ -77,8 +77,7 @@ namespace CostsAnalyse.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpGet("LogOff")] 
         public async Task<IActionResult> LogOff()
         {
             // удаляем аутентификационные куки
