@@ -62,60 +62,49 @@ namespace CostsAnalyse.Services.PageDrivers
         {
 
             ThreadDelay.Delay();
-
-            try
+            foreach (var proxy in proxyList)
             {
-                WebRequest WR = WebRequest.Create(url);
-                WR.Method = "GET";
-                //string[] fulladress = proxyList[++index].Split(":");
-                //var (adress, port) = (fulladress[0], int.Parse(fulladress[1]));
-                //WebProxy myproxy = new WebProxy(adress, port);
-                //myproxy.BypassProxyOnLocal = false;
-                //WR.Proxy = myproxy;
-                WebResponse response = WR.GetResponse();
-                string html;
-                using (Stream stream = response.GetResponseStream())
+                try
                 {
-                    using (StreamReader reader = new StreamReader(stream))
+                    WebRequest WR = WebRequest.Create("https://www.foxtrot.com.ua"+url);
+                    WR.Method = "GET";
+                    WR.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:65.0) Gecko/20100101 Firefox/65.0");
+                    string[] fulladress = proxy.Split(":");
+                    var (adress, port) = (fulladress[0], int.Parse(fulladress[1]));
+                    WebProxy myproxy = new WebProxy(adress, port);
+                    myproxy.BypassProxyOnLocal = false;
+                    WR.Proxy = myproxy;
+                    WebResponse response = WR.GetResponse();
+                    string html;
+                    using (Stream stream = response.GetResponseStream())
                     {
-                        html = reader.ReadToEnd();
+                        using (StreamReader reader = new StreamReader(stream))
+                        {
+                            html = reader.ReadToEnd();
+                        }
                     }
-                }
 
-                HtmlParser parser = new HtmlParser();
-                var parseElement = parser.ParseDocument(html);
-                var divsWithProduct = parseElement.GetElementsByClassName("product-listing")[0]
-                                                  .GetElementsByClassName("product-item");
-              
-                foreach (var div in divsWithProduct)
-                {
-                    ThreadDelay.Delay();
-                    var product = CreateInstanseOfProduct(div, url);
-                    if (_context != null)
+                    HtmlParser parser = new HtmlParser();
+                    var parseElement = parser.ParseDocument(html);
+                    var divsWithProduct = parseElement.GetElementsByClassName("product-listing")[0]
+                                                      .GetElementsByClassName("product-item");
+
+                    foreach (var div in divsWithProduct)
                     {
-                        AddToDBContext(product);
+                        ThreadDelay.Delay();
+                        var product = CreateInstanseOfProduct(div, url);
+                        if (_context != null)
+                        {
+                            AddToDBContext(product);
+                        }
                     }
-                }
-            }
-            catch (Exception ex) when (ex.Message == "Подключение не установлено, т.к.конечный компьютер отверг запрос на подключение Подключение не установлено, т.к.конечный компьютер отверг запрос на подключение")
-            {
-
-                if (proxyList.Count - 1 > index)
+                } 
+                catch (Exception ex)
                 {
-                    proxyList.Remove(proxyList[index]);
-                }
-                ParseProductsFromPage(url, index);
-            }
-            catch (Exception ex)
-            {
 
-                if (index < proxyList.Count - 1)
-                {
-                    index++;
-                    ParseProductsFromPage(url, index++);
+                    
                 }
             }
-            ProxyServerConnectionManagment.SerializeByPuts(proxyList);
         }
         private Product CreateInstanseOfProduct(IElement div,string url)
         {

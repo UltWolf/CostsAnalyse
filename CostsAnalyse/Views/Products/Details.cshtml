@@ -52,6 +52,7 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://d3js.org/d3.v3.min.js"> </script>
+    <a class="subsribe">+</a>
 <script type="text/javascript">
 window.onscroll = function() {
   var scrolled = window.pageYOffset || document.documentElement.scrollTop; 
@@ -235,6 +236,25 @@ svg.selectAll(".dot")
             </table>`;
                   var div = "<div class=\"prices\">"+table+"</div>"
                   document.getElementsByClassName("infoblock")[0].innerHTML = div;
+                },
+                error: function (err) {
+                }
+            });
+        };
+         function Subscribe(e) {
+            e.preventDefault();
+            urlArray = window.location.href.split("/");
+            index = urlArray[urlArray.length-1];
+            ajaxUrl = "/Product/Subscribe/"+index;
+            $.ajax({
+                type: "GET",
+                url: ajaxUrl,
+                cache: false,
+                contentType: false,
+                method: "GET",
+                processData: false,
+                success: function (data) { 
+                 console.log(data); 
                 },
                 error: function (err) {
                 }

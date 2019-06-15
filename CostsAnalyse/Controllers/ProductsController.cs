@@ -29,15 +29,40 @@ namespace CostsAnalyse.Controllers
         private Task<UserApp> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
         [AllowAnonymous]
+        [HttpGet("/Products")]
+        [HttpGet("/Products/{page}")]
+        [HttpGet("/Products/index/{page}")]
         // GET: Products
-        public async Task<IActionResult> Index([FromRoute]int page = 0)
+        public async Task<IActionResult> Index(int? page)
         {
+            if (page == null)
+            {
+                page = 0;
+            }
             var userIdentity = (ClaimsIdentity)User.Identity;
             var claims = userIdentity.Claims;
             var roleClaimType = userIdentity.RoleClaimType;
             var roles = claims.Where(c => c.Type == ClaimTypes.Role).ToList();
-             var products = this._context.Products.Skip(page * 20).Take(20).Include(m=> m.Price).Include(m=>m.Information).ToList();
-             if(roles.Count>0){
+
+            var allProducts = this._context.Products;
+            int countProducts = await allProducts.CountAsync();
+            int pageSize = 10;
+
+            ViewData["TotalPages"] = (int)Math.Ceiling(countProducts / (double)pageSize);
+            if (page - 1 >= 0)
+            {
+                ViewData["PreviusPage"] = page - 1;
+            }
+            ViewData["CurrentPage"] = page;
+            if (page + 1 <= (int)ViewData["TotalPages"])
+            {
+                ViewData["NextPage"] = page + 1;
+            }
+            
+        
+            var products = allProducts.Skip((int)page * pageSize).Take(pageSize).Include(m=> m.Price).Include(m=>m.Information).ToList();
+            
+            if (roles.Count>0){
             if(roles[0].Value.ToLowerInvariant()=="administrator"){
              return View("IndexAdmin",products);
             }else{

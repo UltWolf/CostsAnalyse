@@ -8,21 +8,40 @@
 
 
 <div class="container">
-@foreach (var item in Model) {
-    <div class="item" ><div>
-        
-                @Html.DisplayFor(modelItem => item.Name)<br>
-            <a asp-action="Details" asp-route-id="@item.Id">
-                <img src= @Html.DisplayFor(modelItem => item.UrlImage)>   
-            </a><br>
-                @Html.DisplayFor(modelItem => item.Price[item.Price.Count-1].Cost);
-                 @if(item.Price[item.Price.Count-1].IsDiscont){
+    @foreach (var item in Model)
+    {
+        <div class="item">
+            <div>
 
- @Html.DisplayFor(modelItem => item.Price[item.Price.Count-1].OldCost);
+                @Html.DisplayFor(modelItem => item.Name)<br>
+                <a asp-action="Details" asp-route-id="@item.Id">
+                    <img src=@Html.DisplayFor(modelItem => item.UrlImage)>
+                </a><br>
+                @Html.DisplayFor(modelItem => item.Price[item.Price.Count - 1].Cost);
+                @if (item.Price[item.Price.Count - 1].IsDiscont)
+                {
+
+                    @Html.DisplayFor(modelItem => item.Price[item.Price.Count - 1].OldCost);
                 }
-         </div>
+            </div>
         </div>
-}
-       </div>
-    </tbody>
-</table>
+    }
+</div> 
+<span>
+    @if (ViewData["PreviusPage"]!=null)
+    {
+        <a asp-action="Index" asp-route-page=@((int)ViewData["PreviusPage"]))>
+            <<
+        </a>
+    }
+    <p>
+        @(((int)ViewData["CurrentPage"])+1)
+    </p>
+     @if (ViewData["NextPage"]!=null)
+    {
+        <a asp-action="Index" asp-route-page=@(ViewData["NextPage"])>
+            >>
+        </a>
+    }
+    </span>
+                 
