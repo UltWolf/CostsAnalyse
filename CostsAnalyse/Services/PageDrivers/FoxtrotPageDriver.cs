@@ -60,13 +60,18 @@ namespace CostsAnalyse.Services.PageDrivers
         }
         public void ParseProductsFromPage(string url, int index)
         {
-
+            if (index != 0)
+            {
+                url += "?page=" + index;
+            }
             ThreadDelay.Delay();
             foreach (var proxy in proxyList)
             {
                 try
                 {
+                    string baseUrl = url;
                     WebRequest WR;
+                   
                     if (url.Contains("https://www.foxtrot.com.ua"))
                     {
                         WR = WebRequest.Create(url);
@@ -96,6 +101,7 @@ namespace CostsAnalyse.Services.PageDrivers
                     var parseElement = parser.ParseDocument(html);
                     var divsWithProduct = parseElement.GetElementsByClassName("product-listing")[0]
                                                       .GetElementsByClassName("product-item");
+                  
 
                     foreach (var div in divsWithProduct)
                     {
@@ -106,6 +112,26 @@ namespace CostsAnalyse.Services.PageDrivers
                             AddToDBContext(product);
                         }
                     }
+                    string page = "";
+                    var pagination = parseElement.GetElementsByClassName("pagination-number-list");
+                    if (pagination.Length > 0)
+                    {
+                        var pages = pagination[0].GetElementsByTagName("li");
+                        for (int i = 0; i < pages.Length; i++)
+                        {
+                            if (pages[i].ClassList.Contains("active"))
+                            {
+                                page = pages[++i].GetElementsByTagName("a")[0].GetElementsByTagName("span")[0].TextContent;
+                                break;
+                            }
+                        }
+
+                    }
+                    if (page != "")
+                    {
+                        ParseProductsFromPage(baseUrl, int.Parse(page));
+                    }
+
                 } 
                 catch (Exception ex)
                 {
