@@ -15,7 +15,7 @@ namespace TestsForCostsAnalyse.Tests.ParsersTests.FoxtrotTest
         {
             FoxtrotParser rpd = new FoxtrotParser();
             List<String> proxys = ProxyServerConnectionManagment.GetProxyHrefs();
-            Assert.NotNull(rpd.GetProduct("https://www.foxtrot.com.ua/ru/shop/mobilnye_telefony_samsung_sm-j320h-galaxy-j3-duos-zdd-gold.html?sc_content=13870_2",0,ref proxys));
+            Assert.NotNull(rpd.GetProduct("/ru/shop/mobilnye_telefony_samsung_sm-j320h-galaxy-j3-duos-zdd-gold.html?sc_content=13870_2",ref proxys));
 
         }
 

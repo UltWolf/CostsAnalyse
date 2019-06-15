@@ -14,7 +14,7 @@ namespace TestsForCostsAnalyse.Tests.ParsersTests.ComfyTest
         {
             ComfyParser cp = new ComfyParser();
             List<String> proxys = ProxyServerConnectionManagment.GetProxyHrefs();
-            Assert.NotNull(cp.GetProduct("https://comfy.ua/stiral-naja-mashina-lg-fh0b8nd1.html",0,ref proxys));
+            Assert.NotNull(cp.GetProduct("https://comfy.ua/stiral-naja-mashina-lg-fh0b8nd1.html",ref proxys));
 
         }
     }

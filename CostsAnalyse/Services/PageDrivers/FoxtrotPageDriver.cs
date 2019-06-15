@@ -66,7 +66,15 @@ namespace CostsAnalyse.Services.PageDrivers
             {
                 try
                 {
-                    WebRequest WR = WebRequest.Create("https://www.foxtrot.com.ua"+url);
+                    WebRequest WR;
+                    if (url.Contains("https://www.foxtrot.com.ua"))
+                    {
+                        WR = WebRequest.Create(url);
+                    }
+                    else
+                    {
+                      WR   = WebRequest.Create("https://www.foxtrot.com.ua" + url);
+                    }
                     WR.Method = "GET";
                     WR.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:65.0) Gecko/20100101 Firefox/65.0");
                     string[] fulladress = proxy.Split(":");
@@ -111,11 +119,14 @@ namespace CostsAnalyse.Services.PageDrivers
             try
             {
                 FoxtrotParser fp = new FoxtrotParser();
-                string urlForPage = div.GetElementsByClassName("detail-link")[0].GetAttribute("href");
+                var elementDetailLink = div.GetElementsByClassName("detail-link")[0];
+                string urlForPage = elementDetailLink.GetAttribute("href");
+                var img = elementDetailLink.GetElementsByTagName("img")[0];
                 var product = fp.GetProduct(urlForPage,  ref proxyList);
 
                 product.Name = div.GetAttribute("data-title");
                 product.Index = product.Name.Split("(")[1].Split(")")[0];
+                
                 var price = div.GetElementsByClassName("price")[0];
                 var priceWrapper = price.GetElementsByClassName("price__wrapper")[0];
                 var price_relevant = priceWrapper.GetElementsByClassName("price__relevant")[0];

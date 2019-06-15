@@ -29,8 +29,20 @@ namespace CostsAnalyse.Services.Parses
                 }
             }
             HtmlParser parser = new HtmlParser();
-            var DomDocument = parser.ParseDocument(html); 
-            
+            var DomDocument = parser.ParseDocument(html);
+            var divWithInformation = DomDocument.GetElementsByClassName("product-store-information");
+            if (divWithInformation.Length != 0)
+            {
+                var divWithImg = divWithInformation[0].GetElementsByClassName("owl-carousel");
+                if (divWithImg.Length != 0)
+                {
+                    var img = divWithImg[0].GetElementsByTagName("img");
+                    if (img.Length != 0)
+                    {
+                        product.UrlImage = img[0].GetAttribute("data-src");
+                    }
+                }
+            }
             var divCharacter = DomDocument.GetElementsByClassName("characteristic__block")[0];
             var lis = divCharacter.GetElementsByTagName("li");
             foreach(var li in lis)
