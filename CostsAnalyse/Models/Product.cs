@@ -36,7 +36,7 @@ namespace CostsAnalyse.Models
         public string Index{get;set;}
         public  decimal Max{get;set;} = 0;
         public  decimal Min{get;set;} = 0;
-        public List<UserProduct> Subscribers{get;set;} 
+        public List<UserProduct> Subscribers{get;set;} = new List<UserProduct>();
         public ICollection<Information> Information { get; set; }
         public List<Price> LastPrice { get; set; }
  

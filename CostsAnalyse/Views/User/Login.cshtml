@@ -1,10 +1,10 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Login";
 }
 @model CostsAnalyse.ViewModels.LoginViewModel
-<form method="post" asp-controller="User" asp-action="Login"
-      asp-route-returnUrl="@Model.ReturnUrl">
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<form method="post" asp-controller="User" asp-action="Login"id="loginForm"> 
+      @*asp-route-returnUrl="@Model.ReturnUrl"*@ 
     <div asp-validation-summary="ModelOnly"></div>
     <div>
         <label asp-for="Username"></label><br />
@@ -15,8 +15,29 @@
         <label asp-for="Password"></label><br />
         <input asp-for="Password" />
         <span asp-validation-for="Password"></span>
-    </div> 
+    </div>
     <div>
-        <input type="submit" value="Войти" />
+        <input type="submit" value="Войти" id="login_but"  />
     </div>
 </form>
+<script type="text/javascript">
+  
+    $("#loginForm").submit(function (e) {
+       var form = $(this);
+        e.preventDefault();
+        $.ajax({
+            type: "POST",
+            url: "Login", 
+            method: "POST",
+            data: form.serialize(),
+            success: function (data) { 
+                e.preventDefault();
+                localStorage.setItem("token",data.token);
+                window.location.href="/home/index";
+            },
+            error: function (err) {
+
+            }
+        });
+    });
+</script>

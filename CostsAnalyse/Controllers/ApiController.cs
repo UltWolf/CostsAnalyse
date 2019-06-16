@@ -31,5 +31,6 @@ namespace CostsAnalyse.Controllers
             var product = _context.Products.Include(m=>m.LastPrice).ThenInclude(m=>m.Company).Where(m=>m.Id==id); 
           return new JsonResult(product);
         }
+         
     }
 }

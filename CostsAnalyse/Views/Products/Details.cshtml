@@ -42,11 +42,13 @@
             }
             </table>
 <div class="infoblock"></div>
+
     </dl>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
+    <button onclick="Subscribe(event)">+</button>
 </div>
 
 
@@ -68,7 +70,68 @@ var height = 500;
 var width = 500;
 var margin = 25; 
 var offset = 10;   
-var svg;
+    var svg;
+     function Subscribe(e) {
+        e.preventDefault();
+        urlArray = window.location.href.split("/");
+            index = urlArray[urlArray.length-1];
+         ajaxUrl = "/Subscribe/" + index;
+         console.log(localStorage.getItem('token'));
+            $.ajax({
+                type: "GET",
+                url: ajaxUrl,
+                cache: false,
+                contentType: false,
+                method: "GET",
+                 headers: { "Authorization": localStorage.getItem('token') },
+                processData: false,
+                success: function (data) {
+                    
+                },
+                error: function (err) {
+                }
+            });
+        }; 
+    function GetCompany(e) {
+            e.preventDefault();
+            urlArray = window.location.href.split("/");
+            index = urlArray[urlArray.length-1];
+            ajaxUrl = "/api/Price/"+index;
+            $.ajax({
+                type: "GET",
+                url: ajaxUrl,
+                cache: false,
+                contentType: false,
+                method: "GET",
+                processData: false,
+                success: function (data) { 
+                  var price = data[0].lastPrice[0];
+                  var urlImage = "";
+                  
+                  if(price.company.name=="Rozetka"){
+                     urlImage="<img src=\"https://taradajko.com/wp-content/uploads/2016/11/unnamed.png\">";
+                  }
+                  var src = "<a href="+price.company.url+">"+urlImage+"</a>"
+                  if(price.isDiscont){
+                  var cost = "<p>"+price.cost+"</p>"+"<p>"+ price.discont +"% </p>"+"<p>"+ price.oldCost +"</p>"
+                  }
+                  var table = `
+                  <table border=\"1\"><caption>Цены</caption>
+                <tr><th>Company</th><th>Prices</th><th>Date</th></tr>
+                <tr>
+                <td>`+src+`</td>
+                  <td>`+cost+`</td>
+               <td>`+ new Date(price.date).toLocaleDateString() +` </td>
+               </tr>
+            </table>`;
+                  var div = "<div class=\"prices\">"+table+"</div>"
+                  document.getElementsByClassName("infoblock")[0].innerHTML = div;
+                },
+                error: function (err) {
+                }
+            });
+        };
+        
 
            function GetGraph(e) {
             e.preventDefault();
@@ -201,63 +264,4 @@ svg.selectAll(".dot")
 }
 }
 </script>
-<script>
-    function GetCompany(e) {
-            e.preventDefault();
-            urlArray = window.location.href.split("/");
-            index = urlArray[urlArray.length-1];
-            ajaxUrl = "/api/Price/"+index;
-            $.ajax({
-                type: "GET",
-                url: ajaxUrl,
-                cache: false,
-                contentType: false,
-                method: "GET",
-                processData: false,
-                success: function (data) { 
-                  var price = data[0].lastPrice[0];
-                  var urlImage = "";
-                  
-                  if(price.company.name=="Rozetka"){
-                     urlImage="<img src=\"https://taradajko.com/wp-content/uploads/2016/11/unnamed.png\">";
-                  }
-                  var src = "<a href="+price.company.url+">"+urlImage+"</a>"
-                  if(price.isDiscont){
-                  var cost = "<p>"+price.cost+"</p>"+"<p>"+ price.discont +"% </p>"+"<p>"+ price.oldCost +"</p>"
-                  }
-                  var table = `
-                  <table border=\"1\"><caption>Цены</caption>
-                <tr><th>Company</th><th>Prices</th><th>Date</th></tr>
-                <tr>
-                <td>`+src+`</td>
-                  <td>`+cost+`</td>
-               <td>`+ new Date(price.date).toLocaleDateString() +` </td>
-               </tr>
-            </table>`;
-                  var div = "<div class=\"prices\">"+table+"</div>"
-                  document.getElementsByClassName("infoblock")[0].innerHTML = div;
-                },
-                error: function (err) {
-                }
-            });
-        };
-         function Subscribe(e) {
-            e.preventDefault();
-            urlArray = window.location.href.split("/");
-            index = urlArray[urlArray.length-1];
-            ajaxUrl = "/Product/Subscribe/"+index;
-            $.ajax({
-                type: "GET",
-                url: ajaxUrl,
-                cache: false,
-                contentType: false,
-                method: "GET",
-                processData: false,
-                success: function (data) { 
-                 console.log(data); 
-                },
-                error: function (err) {
-                }
-            });
-        };
-</script>
+ 

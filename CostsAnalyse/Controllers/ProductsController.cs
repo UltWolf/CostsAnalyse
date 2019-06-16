@@ -12,10 +12,11 @@ using CostsAnalyse.Services;
 using CostsAnalyse.Extensions;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace CostsAnalyse.Controllers
 {
-    [Authorize(Roles = "Administrator, Moderator")]
+    [Authorize(Roles = "Administrator, Moderator")] 
     public class ProductsController : Controller
     {
         private readonly ApplicationContext _context;
@@ -109,23 +110,35 @@ namespace CostsAnalyse.Controllers
             {
                 return View("InputName");
             }
-        }
+        } 
+
         [HttpGet("Subscribe/{id}")]
         public async Task<IActionResult> Subscribe(int id){
 
            var product = _context.Products.First(m=> m.Id==id);
            if(product!=null){
-               var user = await GetCurrentUserAsync();
-               var userId = user?.Id;
-               if(userId !=null){
-                    UserProduct UP = new UserProduct();
-                    UP.Products = product;
-                    UP.Users = user;
-               product.Subscribers.Add(UP);
-               _context.Update(product);
-               await _context.SaveChangesAsync();
-                return Ok();
-               }
+                try
+                {
+                    var user = await GetCurrentUserAsync();
+                    var userId = user?.Id;
+                    if (userId != null)
+                    {
+                        UserProduct UP = new UserProduct();
+                        UP.Products = product;
+                        UP.IdProduct = product.Id;
+                        UP.Users = user;
+                        UP.IdUserapp = user.Id;
+                        user.products.Add(UP);
+                        product.Subscribers.Add(UP);
+                        _context.Update(product);
+                        await _context.SaveChangesAsync();
+                        return Ok();
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                }
            }
             return BadRequest();
         }
