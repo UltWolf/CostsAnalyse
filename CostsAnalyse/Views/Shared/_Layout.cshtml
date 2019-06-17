@@ -43,7 +43,7 @@
 }else{
        <li><a asp-area="" asp-controller="User" asp-action="Register">Профіль</a></li> 
          <li><a asp-area="" asp-controller="User" asp-action="LogOff">Вийти </a></li> 
-}
+}  <li> <input type="textbox" id="search" class="glyphicon-search" onchange="" style="color:black"/> </li> 
                 </ul>
             </div>
         </div>
@@ -78,7 +78,35 @@
         </script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
-
+    <script>
+        $("input").keyup(function(e){
+            e.preventDefault(); 
+            var partOfText = $("input").val()
+            if (e.keyCode == 13) {
+                document.location.href = "/search/"+partOfText;
+            }
+            else{
+            ajaxUrl = "/FastSearch/"+partOfText;
+            $.ajax({
+                type: "GET",
+                url: ajaxUrl,
+                cache: false,
+                contentType: false,
+                method: "GET",
+                processData: false,
+                success: function (data) {
+                   for(var i = 0;i<data.length;i++){
+                   console.log(data[i].name +" "+ data[i].urlimage+" "+data[i].id)
+                   }
+                },
+                error: function (err) {
+console.log(err);
+                }
+            })
+            } 
+        });
+        
+    </script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

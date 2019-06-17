@@ -94,23 +94,7 @@ namespace CostsAnalyse.Controllers
             RozetkaMenuDriver rmd = new RozetkaMenuDriver();
             rmd.getPages();
         }
-        [AllowAnonymous]
-        public async Task<IActionResult> Search(string nameOfProduct)
-        {
-            if (nameOfProduct != null)
-            {
-                var products = _context.Products.Where(m => m.Name.Contains(nameOfProduct));
-                if (products == null)
-                {
-                    return View(products);
-                }
-                return NotFound();
-            }
-            else
-            {
-                return View("InputName");
-            }
-        } 
+        
 
         [HttpGet("Subscribe/{id}")]
         public async Task<IActionResult> Subscribe(int id){
@@ -142,6 +126,7 @@ namespace CostsAnalyse.Controllers
            }
             return BadRequest();
         }
+      
         [AllowAnonymous]
         // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
