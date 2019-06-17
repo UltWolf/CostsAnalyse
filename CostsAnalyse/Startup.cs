@@ -61,7 +61,7 @@ namespace CostsAnalyse
             services.AddDbContext<ApplicationContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("StringConnection"), x => x.MigrationsAssembly("CostsAnalyse")));
             services.AddAuthentication().AddCookie();
-            services.AddMvc();
+            services.AddMvc(); 
             var provider = services.BuildServiceProvider();
             //lately cut`s in another class for initialization
             StartsInitialize.Initialize();
