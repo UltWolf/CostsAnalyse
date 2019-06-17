@@ -79,12 +79,7 @@ var offset = 10;
          console.log(localStorage.getItem('token'));
             $.ajax({
                 type: "GET",
-                url: ajaxUrl,
-                cache: false,
-                contentType: false,
-                method: "GET",
-                 headers: { "Authorization": localStorage.getItem('token') },
-                processData: false,
+                url: ajaxUrl, 
                 success: function (data) {
                     
                 },

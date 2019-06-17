@@ -67,8 +67,7 @@ namespace CostsAnalyse.Controllers
                 if (result.Succeeded)
                 { 
                      
-                        string token = BuildToken(model);
-                        return new JsonResult(new { token = token });
+                        return RedirectToAction("Home","Index");
                   
                 }
                 else
@@ -78,18 +77,7 @@ namespace CostsAnalyse.Controllers
             }
             return View(model);
         }
-        private string BuildToken(LoginViewModel user)
-        {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(_config["Jwt:Issuer"],
-             _config["Jwt:Issuer"],
-             expires: DateTime.Now.AddMinutes(30),
-             signingCredentials: creds);
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
+      
         [HttpGet("LogOff")] 
         public async Task<IActionResult> LogOff()
         {

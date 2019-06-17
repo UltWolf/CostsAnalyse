@@ -22,22 +22,5 @@
 </form>
 <script type="text/javascript">
   
-    $("#loginForm").submit(function (e) {
-       var form = $(this);
-        e.preventDefault();
-        $.ajax({
-            type: "POST",
-            url: "Login", 
-            method: "POST",
-            data: form.serialize(),
-            success: function (data) { 
-                e.preventDefault();
-                localStorage.setItem("token",data.token);
-                window.location.href="/home/index";
-            },
-            error: function (err) {
-
-            }
-        });
-    });
+    
 </script>

@@ -7,12 +7,15 @@ using CostsAnalyse.Models;
 using CostsAnalyse.Models.Context;
 using CostsAnalyse.Services.Abstracts;
 using CostsAnalyse.Services.Initializers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -54,28 +57,11 @@ namespace CostsAnalyse
             })
                .AddEntityFrameworkStores<ApplicationContext>()
                .AddDefaultTokenProviders(); 
-            services.ConfigureApplicationCookie(configure => {
-                configure.AccessDeniedPath = "/error/accessdenied";
-                configure.LoginPath = "/user/login";
-                configure.LogoutPath = "/user/logoff";
-            });
+           
             services.AddDbContext<ApplicationContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("StringConnection"), x => x.MigrationsAssembly("CostsAnalyse")));
-            services.AddAuthentication().AddCookie(cfg => cfg.SlidingExpiration = true)
- .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = Configuration["Jwt:Issuer"],
-                    ValidAudience = Configuration["Jwt:Issuer"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
-                };
-            });
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddAuthentication().AddCookie();
+            services.AddMvc();
             var provider = services.BuildServiceProvider();
             //lately cut`s in another class for initialization
             StartsInitialize.Initialize();
