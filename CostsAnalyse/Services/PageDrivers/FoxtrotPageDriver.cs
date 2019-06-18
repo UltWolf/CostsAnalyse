@@ -6,6 +6,7 @@ using CostsAnalyse.Models.Context;
 using CostsAnalyse.Services.MenuDrivers;
 using CostsAnalyse.Services.Parses;
 using CostsAnalyse.Services.ProxyServer;
+using CostsAnalyse.Services.Repositories;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,16 +21,14 @@ namespace CostsAnalyse.Services.PageDrivers
     {
         private readonly BinaryFormatter _bf = new BinaryFormatter();
         private readonly ApplicationContext _context;
+        private readonly ProductRepository _productRepository;
         private List<string> proxyList;
-        public FoxtrotPageDriver() {
-            this.proxyList = ProxyServerConnectionManagment.GetProxyHrefs();
-            GenerateHrefs();
-
-        }
+         
         public FoxtrotPageDriver(ApplicationContext context) {
             this.proxyList = ProxyServerConnectionManagment.GetProxyHrefs();
             GenerateHrefs();
             this._context = context;
+            _productRepository = new ProductRepository(_context);
         }
         
 
@@ -191,35 +190,12 @@ namespace CostsAnalyse.Services.PageDrivers
                 var currentCost = product.LastPrice[0].Cost;
                 if (productFromContext == null)
                 {
-                    product.Price = product.LastPrice;
-                    product.Min = currentCost;
-                    product.Max = currentCost;
-                    _context.Add(product);
+                    _productRepository.Add(product);
                 }
                 else
                 {
-                    productFromContext.Price.Add(product.LastPrice);
-                    var lastPrice = productFromContext.LastPrice.FirstOrDefault(m => m.Company.Equals(product.LastPrice[0].Company));
-                    if (lastPrice != null)
-                    {
-                        lastPrice = product.LastPrice[0];
-                    }
-                    else
-                    {
-                        productFromContext.LastPrice.Add(product.LastPrice[0]);
-                    }
-                    if (currentCost > productFromContext.Max)
-                    {
-                        productFromContext.Max = currentCost;
-                    }
-                    else if (currentCost < productFromContext.Min)
-                    {
-                        productFromContext.Min = currentCost;
-                    }
-                    _context.Products.Update(productFromContext);
-                }
-
-                _context.SaveChanges();
+                    _productRepository.Update(product, productFromContext);
+                } 
             }
     }
         private int getPriceFromNumb(IElement element)

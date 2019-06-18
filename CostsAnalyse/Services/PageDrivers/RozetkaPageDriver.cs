@@ -19,10 +19,12 @@ namespace CostsAnalyse.Services.PageDrivers
     {
         List<string> proxyList = new List<string>();
         private readonly ApplicationContext _context;
+        private readonly Repositories.ProductRepository _productRepository;
         public RozetkaPageDriver(ApplicationContext Context)
         {
             this.proxyList = ProxyServerConnectionManagment.GetProxyHrefs();
             this._context = Context;
+            this._productRepository = new Repositories.ProductRepository(_context);
             GenerateHrefs();
         }
         public HashSet<String> GetPages()
@@ -89,42 +91,7 @@ namespace CostsAnalyse.Services.PageDrivers
                     {
                         string urlForPage = div.GetElementsByClassName("g-i-tile-i-title")[0].GetElementsByTagName("a")[0].GetAttribute("href");
                         var product = rp.GetProduct(urlForPage, ref proxyList);
-                        if (!product.IsNull())
-                        {
-                            var productFromContext = _context.Products.FirstOrDefault(m => m.Index == product.Index);
-                            var currentCost = product.LastPrice[0].Cost;
-                            if (productFromContext == null)
-                            {
-                                product.Price = product.LastPrice;
-                                product.Min = currentCost;
-                                product.Max = currentCost;
-                                _context.Add(product);
-                            }
-                            else
-                            {
-                                productFromContext.Price.Add(product.LastPrice);
-                                var lastPrice = productFromContext.LastPrice.FirstOrDefault(m => m.Company.Equals(product.LastPrice[0].Company));
-                                if (lastPrice != null)
-                                {
-                                    lastPrice = product.LastPrice[0];
-                                }
-                                else
-                                {
-                                    productFromContext.LastPrice.Add(product.LastPrice[0]);
-                                }
-                                if (currentCost > productFromContext.Max)
-                                {
-                                    productFromContext.Max = currentCost;
-                                }
-                                else if (currentCost < productFromContext.Min)
-                                {
-                                    productFromContext.Min = currentCost;
-                                }
-                                _context.Products.Update(productFromContext);
-                            }
-
-                            _context.SaveChanges();
-                        }
+                        _productRepository.AddProduct(product);
 
                     }
                     catch (Exception ex)

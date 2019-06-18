@@ -9,7 +9,7 @@ namespace CostsAnalyse.Services.Abstracts
     {
         bool Add(T item);
         T Get();
-        bool Update(T item);
+        bool Update(T item, T updateItem);
         bool Delete(T item);
     }
 }
