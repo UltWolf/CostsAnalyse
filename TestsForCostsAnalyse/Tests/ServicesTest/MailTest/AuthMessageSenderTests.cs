@@ -7,6 +7,7 @@ namespace TestsForCostsAnalyse.Tests.ServicesTest.MailTest
 {
     public class AuthMessageSenderTests
     {
+        AuthMessageSender authMessage = new AuthMessageSender();
         [Fact]
         public async void IsSending()
         {

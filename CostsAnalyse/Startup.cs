@@ -7,6 +7,7 @@ using CostsAnalyse.Models;
 using CostsAnalyse.Models.Context;
 using CostsAnalyse.Services.Abstracts;
 using CostsAnalyse.Services.Initializers;
+using CostsAnalyse.Services.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -61,6 +62,7 @@ namespace CostsAnalyse
             services.AddDbContext<ApplicationContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("StringConnection"), x => x.MigrationsAssembly("CostsAnalyse")));
             services.AddAuthentication().AddCookie();
+            services.AddSingleton<ILogging, FileLogging>();
             services.AddMvc(); 
             var provider = services.BuildServiceProvider();
             //lately cut`s in another class for initialization
@@ -73,6 +75,7 @@ namespace CostsAnalyse
             roleInitializer.Initialize(provider);
             AdminInitialize adminInitialize = new AdminInitialize();
             adminInitialize.Initialize(provider);
+            LoggingProvider.InitiateFolder();
 
 
         }

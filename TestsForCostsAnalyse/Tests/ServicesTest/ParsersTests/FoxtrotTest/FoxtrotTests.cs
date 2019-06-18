@@ -21,7 +21,7 @@ namespace TestsForCostsAnalyse.Tests.ParsersTests.FoxtrotTest
 
         [Fact]
         public void ListProductsAreNotNull() {
-           FoxtrotPageDriver FPD = new FoxtrotPageDriver();
+           FoxtrotPageDriver FPD = new FoxtrotPageDriver(new CostsAnalyse.Models.Context.ApplicationContext());
 
             FPD.ParseProductsFromPage("https://www.foxtrot.com.ua/ru/shop/mobilnye_telefony.html", 0);
 

@@ -13,6 +13,7 @@ using CostsAnalyse.Extensions;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using CostsAnalyse.Services.Abstracts;
 
 namespace CostsAnalyse.Controllers
 {
@@ -20,12 +21,14 @@ namespace CostsAnalyse.Controllers
     public class ProductsController : Controller
     {
         private readonly ApplicationContext _context;
-       private readonly UserManager<UserApp> _userManager;
+        private readonly UserManager<UserApp> _userManager;
+        private readonly ILogging _logging;
 
-        public ProductsController(ApplicationContext context, UserManager<UserApp> userManager)
+        public ProductsController(ApplicationContext context, UserManager<UserApp> userManager, ILogging logging)
         {
             _context = context;
             _userManager = userManager;
+            _logging = logging;
         }
         private Task<UserApp> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
@@ -35,43 +38,50 @@ namespace CostsAnalyse.Controllers
         [HttpGet("/Products/index/{page}")]
         // GET: Products
         public async Task<IActionResult> Index(int? page)
-        {
-            if (page == null)
-            {
-                page = 0;
-            }
-            var userIdentity = (ClaimsIdentity)User.Identity;
-            var claims = userIdentity.Claims;
-            var roleClaimType = userIdentity.RoleClaimType;
-            var roles = claims.Where(c => c.Type == ClaimTypes.Role).ToList();
+        { 
+                if (page == null)
+                {
+                    page = 0;
+                }
+                var userIdentity = (ClaimsIdentity)User.Identity;
+                var claims = userIdentity.Claims;
+                var roleClaimType = userIdentity.RoleClaimType;
+                var roles = claims.Where(c => c.Type == ClaimTypes.Role).ToList();
 
-            var allProducts = this._context.Products;
-            int countProducts = await allProducts.CountAsync();
-            int pageSize = 10;
+                var allProducts = this._context.Products;
+                int countProducts = await allProducts.CountAsync();
+                int pageSize = 10;
 
-            ViewData["TotalPages"] = (int)Math.Ceiling(countProducts / (double)pageSize);
-            if (page - 1 >= 0)
-            {
-                ViewData["PreviusPage"] = page - 1;
-            }
-            ViewData["CurrentPage"] = page;
-            if (page + 1 <= (int)ViewData["TotalPages"])
-            {
-                ViewData["NextPage"] = page + 1;
-            }
-            
-        
-            var products = allProducts.Skip((int)page * pageSize).Take(pageSize).Include(m=> m.Price).Include(m=>m.Information).ToList();
-            
-            if (roles.Count>0){
-            if(roles[0].Value.ToLowerInvariant()=="administrator"){
-             return View("IndexAdmin",products);
-            }else{
-            return View("IndexUser",products);
-            }
-             }else{
-                 return View("IndexUser",products);
-             }
+                ViewData["TotalPages"] = (int)Math.Ceiling(countProducts / (double)pageSize);
+                if (page - 1 >= 0)
+                {
+                    ViewData["PreviusPage"] = page - 1;
+                }
+                ViewData["CurrentPage"] = page;
+                if (page + 1 <= (int)ViewData["TotalPages"])
+                {
+                    ViewData["NextPage"] = page + 1;
+                }
+
+
+                var products = allProducts.Skip((int)page * pageSize).Take(pageSize).Include(m => m.Price).Include(m => m.Information).ToList();
+
+                if (roles.Count > 0)
+                {
+                    if (roles[0].Value.ToLowerInvariant() == "administrator")
+                    {
+                        return View("IndexAdmin", products);
+                    }
+                    else
+                    {
+                        return View("IndexUser", products);
+                    }
+                }
+                else
+                {
+                    return View("IndexUser", products);
+                }
+             
         }
 
 
@@ -79,8 +89,7 @@ namespace CostsAnalyse.Controllers
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> AutoAdd()
         {
-
-            List<Product> products = new List<Product>();
+             
             var services = ParsingServicesManager.GetListServices(_context);
             foreach (var service in services)
             {
@@ -120,8 +129,8 @@ namespace CostsAnalyse.Controllers
                     }
                 }
                 catch (Exception ex)
-                {
-
+                { 
+                    await _logging.LogAsync(ex,product);
                 }
            }
             return BadRequest();
