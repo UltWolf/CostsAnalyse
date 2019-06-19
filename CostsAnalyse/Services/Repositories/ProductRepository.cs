@@ -1,6 +1,7 @@
 ﻿using CostsAnalyse.Models;
 using CostsAnalyse.Models.Context;
 using CostsAnalyse.Services.Abstracts;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,40 +11,36 @@ namespace CostsAnalyse.Services.Repositories
 {
     public class ProductRepository : IRepository<Product>
     {
+        private readonly Logging.FileLogging fl = new Logging.FileLogging();
         private readonly ApplicationContext _context;
         public ProductRepository(ApplicationContext applicationContext){
             _context = applicationContext;
         }
-        public bool AddProduct(Product product)
+        public async Task<bool> AddProduct(Product product)
         {
-            if (!product.IsNull())
+            try
             {
                 bool IsAdding = false;
-                var productFromContext = _context.Products.FirstOrDefault(m => m.Index == product.Index);
-                
+                var productFromContext = await _context.Products.FirstOrDefaultAsync(m=> m.Index == product.Index);
+
                 if (productFromContext == null)
                 {
-                    IsAdding =  Add(product);
+                    return await AddAsync(product);
                 }
                 else
                 {
-                    IsAdding = Update(product,productFromContext);  
+                    return await UpdatePriceAsync(product, productFromContext);
                 }
-                if (IsAdding == true)
-                {
-                    try
-                    {
-                        _context.SaveChanges();
-                        return true;
-                    }catch(Exception ex)
-                    {
-                        return false;
-                    }
-                }
+
             }
-            return false;
+            catch(Exception ex)
+            {
+                fl.LogAsync(ex, product);
+                return false;
+            }
+           
         }
-        public bool Add(Product item)
+        public async Task<bool> AddAsync(Product item)
         {
             try
             {
@@ -51,34 +48,55 @@ namespace CostsAnalyse.Services.Repositories
                 item.Price = item.LastPrice;
                 item.Min = currentCost;
                 item.Max = currentCost;
-                _context.Add(item);
+                await _context.AddAsync(item);
+                await _context.SaveChangesAsync();
                 return true;
             }
             catch (Exception ex)
             {
+                await fl.LogAsync(ex, item);
                 return false;
             }
         }
 
-        public bool Delete(Product item)
+        public async Task<bool> DeleteAsync(Product item)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _context.Products.Remove(item);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch(Exception ex)
+            {
+                this.fl.LogAsync(ex, item);
+                return false;
+            }
         }
 
-        public Product Get()
+         
+        public  bool Update(Product product)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _context.Products.Update(product);
+                _context.SaveChanges();
+                return true;
+            }catch(Exception ex)
+            {
+                 fl.LogAsync(ex, product);
+                return false;
+            }
         }
-        
 
         
 
-        public bool Update(Product product, Product productFromContext)
+        public async Task<bool> UpdatePriceAsync(Product product, Product productFromContext)
         {
             try
             {
                 var currentCost = product.LastPrice[0].Cost;
-                var lastPrice = productFromContext.LastPrice.SingleOrDefault(m => m.Company.Equals(product.LastPrice[0].Company));
+                var lastPrice = productFromContext.LastPrice.Single(m => m.Company.Equals(product.LastPrice[0].Company));
 
                 if (lastPrice.Cost != product.LastPrice[0].Cost)
                 {
@@ -94,6 +112,7 @@ namespace CostsAnalyse.Services.Repositories
                     }
                     productFromContext.Price.Add(product.LastPrice[0]);
                     _context.Products.Update(productFromContext);
+                    await _context.SaveChangesAsync();
                     return true;
                 }
                 return false;
@@ -101,8 +120,19 @@ namespace CostsAnalyse.Services.Repositories
             }
             catch(Exception ex)
             {
+                await fl.LogAsync(ex, product);
                 return false;
             }
         }
+
+         
+
+        public async Task<Product> GetAsync(object id)
+        { 
+            return  await _context.Products.Include(m=>m.Subscribers)
+                       .FirstAsync(m=>m.Id==(int)id);
+        }
+
+         
     }
 }
