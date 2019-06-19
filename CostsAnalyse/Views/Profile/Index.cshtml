@@ -1,0 +1,27 @@
+﻿@model UserApp
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+@Html.DisplayFor(model => model.UserName)
+        </dt>
+<dd>
+    @Html.DisplayFor(model => model.Email)
+</dd>
+<dd>
+    @Html.DisplayFor(model => model.EmailConfirmed)
+</dd>
+<dd>
+    @Html.DisplayFor(model => model.Email)
+</dd>
+
+@foreach (var item in Model.products)
+{
+    <tr> 
+        <td> @Html.DisplayFor(modelItem => item.Products.UrlImage)  </td>
+        <td> @Html.DisplayFor(modelItem => item.Products.Name)</td>
+        <td> @Html.DisplayFor(modelItem => item.Products.Category)</td>
+        <a href="unsubscribing/"@Html.DisplayFor(modelItem => item.IdProduct)> - </a>
+    </tr>
+}

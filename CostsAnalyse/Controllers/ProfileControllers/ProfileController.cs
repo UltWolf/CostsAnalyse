@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CostsAnalyse.Controllers
 {
@@ -22,18 +23,14 @@ namespace CostsAnalyse.Controllers
             _context = context;
         }
         [Authorize]
-        [ResponseCache()]
+        [ResponseCache(Duration = 60)]
         public IActionResult Index()
         {
-            var user = _context.Users.First(m => m.Id == _userId);
+            var user = _context.Users.Include(m=> m.products).ThenInclude(m=>m.Products).First(m => m.Id == _userId);
             return View(user);
         }
 
-        public IActionResult ListProduct()
-        {
-            var user = _context.Users.First(m => m.Id == _userId);
-            return View(user.products);
-        }
+        
 
     }
 }
