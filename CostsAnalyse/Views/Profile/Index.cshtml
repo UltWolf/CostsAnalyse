@@ -4,6 +4,7 @@
 }
 
 <h2>Index</h2>
+<dt>
 @Html.DisplayFor(model => model.UserName)
         </dt>
 <dd>
@@ -18,10 +19,31 @@
 
 @foreach (var item in Model.products)
 {
-    <tr> 
+    <tr>
+        <td   > @Html.HiddenFor(modelItem=> item.IdProduct)</td>
         <td> @Html.DisplayFor(modelItem => item.Products.UrlImage)  </td>
         <td> @Html.DisplayFor(modelItem => item.Products.Name)</td>
-        <td> @Html.DisplayFor(modelItem => item.Products.Category)</td>
-        <a href="unsubscribing/"@Html.DisplayFor(modelItem => item.IdProduct)> - </a>
+        <td> @Html.DisplayFor(modelItem => item.Products.Category)</td> 
+        <td><button onclick="unSubscribe(event)" id="@item.IdProduct">-</button></td>
     </tr>
 }
+
+<script> 
+ function unSubscribe(e) {
+     e.preventDefault(); 
+     id = e.target.getAttribute("id");   
+        urlArray = window.location.href.split("/");
+            index = urlArray[urlArray.length-1];
+         ajaxUrl = "/api/subscribe/unsubscribe/" + id;
+         console.log(localStorage.getItem('token'));
+            $.ajax({
+                type: "GET",
+                url: ajaxUrl,
+                success: function (data) {
+
+                },
+                error: function (err) {
+                }
+            });
+        };
+</script>

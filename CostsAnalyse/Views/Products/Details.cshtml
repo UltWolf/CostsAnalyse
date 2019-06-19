@@ -75,15 +75,16 @@ var offset = 10;
         e.preventDefault();
         urlArray = window.location.href.split("/");
             index = urlArray[urlArray.length-1];
-         ajaxUrl = "/Subscribe/" + index;
-         console.log(localStorage.getItem('token'));
+         ajaxUrl = "/api/Subscribe/Subscribe/" + index; 
             $.ajax({
                 type: "GET",
                 url: ajaxUrl, 
                 success: function (data) {
                     
+                    console.log(data);
                 },
                 error: function (err) {
+                    console.log(err);
                 }
             });
         }; 

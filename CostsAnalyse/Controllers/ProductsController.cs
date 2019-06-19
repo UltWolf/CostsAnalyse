@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using CostsAnalyse.Services.Abstracts;
+using CostsAnalyse.Services.Repositories;
 
 namespace CostsAnalyse.Controllers
 {
@@ -23,12 +24,15 @@ namespace CostsAnalyse.Controllers
         private readonly ApplicationContext _context;
         private readonly UserManager<UserApp> _userManager;
         private readonly ILogging _logging;
+        private readonly ProductRepository _productRepository;
 
         public ProductsController(ApplicationContext context, UserManager<UserApp> userManager, ILogging logging)
         {
             _context = context;
             _userManager = userManager;
             _logging = logging;
+            _productRepository = new ProductRepository(context);
+            
         }
         private Task<UserApp> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
@@ -105,36 +109,7 @@ namespace CostsAnalyse.Controllers
         }
         
 
-        [HttpGet("Subscribe/{id}")]
-        public async Task<IActionResult> Subscribe(int id){
-
-           var product = _context.Products.First(m=> m.Id==id);
-           if(product!=null){
-                try
-                {
-                    var user = await GetCurrentUserAsync();
-                    var userId = user?.Id;
-                    if (userId != null)
-                    {
-                        UserProduct UP = new UserProduct();
-                        UP.Products = product;
-                        UP.IdProduct = product.Id;
-                        UP.Users = user;
-                        UP.IdUserapp = user.Id;
-                        user.products.Add(UP);
-                        product.Subscribers.Add(UP);
-                        _context.Update(product);
-                        await _context.SaveChangesAsync();
-                        return Ok();
-                    }
-                }
-                catch (Exception ex)
-                { 
-                    await _logging.LogAsync(ex,product);
-                }
-           }
-            return BadRequest();
-        }
+    
       
         [AllowAnonymous]
         // GET: Products/Details/5
@@ -169,8 +144,7 @@ namespace CostsAnalyse.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
+                await _productRepository.AddAsync(product);
                 return RedirectToAction(nameof(Index));
             }
             return View(product);
@@ -183,7 +157,7 @@ namespace CostsAnalyse.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products.FindAsync(id);
+            var product = await _productRepository.GetAsync(id);
             if (product == null)
             {
                 return NotFound();
@@ -204,8 +178,7 @@ namespace CostsAnalyse.Controllers
             {
                 try
                 {
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
+                    _productRepository.Update(product); 
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -230,12 +203,12 @@ namespace CostsAnalyse.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var product = await _productRepository.GetAsync(id);
             if (product == null)
             {
                 return NotFound();
             }
+            await _productRepository.DeleteAsync(product);
 
             return View(product);
         }

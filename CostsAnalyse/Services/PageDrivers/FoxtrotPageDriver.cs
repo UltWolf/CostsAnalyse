@@ -186,16 +186,8 @@ namespace CostsAnalyse.Services.PageDrivers
         {
             if (!product.IsNull())
             {
-                var productFromContext = _context.Products.FirstOrDefault(m => m.Index == product.Index);
-                var currentCost = product.LastPrice[0].Cost;
-                if (productFromContext == null)
-                {
-                    _productRepository.Add(product);
-                }
-                else
-                {
-                    _productRepository.Update(product, productFromContext);
-                } 
+  
+                    _productRepository.AddProduct(product); 
             }
     }
         private int getPriceFromNumb(IElement element)
