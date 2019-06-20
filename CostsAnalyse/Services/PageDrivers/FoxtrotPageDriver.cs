@@ -20,7 +20,6 @@ namespace CostsAnalyse.Services.PageDrivers
     public class FoxtrotPageDriver : IPageDrivers
     {
         private readonly BinaryFormatter _bf = new BinaryFormatter();
-        private readonly Logging.FileLogging fl = new Logging.FileLogging();
         private readonly ApplicationContext _context;
         private readonly ProductRepository _productRepository;
         private List<string> proxyList;
@@ -107,12 +106,9 @@ namespace CostsAnalyse.Services.PageDrivers
                     {
                         ThreadDelay.Delay();
                         var product = CreateInstanseOfProduct(div, url);
-                        if (product != null)
+                        if (_context != null)
                         {
-                            if (_context != null)
-                            {
-                                AddToDBContext(product);
-                            }
+                            AddToDBContext(product);
                         }
                     }
                     string page = "";
@@ -138,7 +134,7 @@ namespace CostsAnalyse.Services.PageDrivers
                 } 
                 catch (Exception ex)
                 {
-                    fl.LogAsync(ex, new List<string>() { proxy, url });
+
                     
                 }
             }
@@ -183,7 +179,6 @@ namespace CostsAnalyse.Services.PageDrivers
             }
             catch (Exception ex)
             {
-                
                 return null;
             }
         }

@@ -18,27 +18,22 @@ namespace CostsAnalyse.Services.Repositories
         }
         public async Task<bool> AddProduct(Product product)
         {
-            try
+            if (!product.IsNull())
             {
                 bool IsAdding = false;
-                var productFromContext = await _context.Products.FirstOrDefaultAsync(m=> m.Index == product.Index);
-
+                var productFromContext = await _context.Products.FindAsync(product.Index);
+                
                 if (productFromContext == null)
                 {
-                    return await AddAsync(product);
+                   return   await AddAsync(product);
                 }
                 else
                 {
-                    return await UpdatePriceAsync(product, productFromContext);
+                    return await UpdatePriceAsync(product,productFromContext);  
                 }
-
+              
             }
-            catch(Exception ex)
-            {
-                fl.LogAsync(ex, product);
-                return false;
-            }
-           
+            return false;
         }
         public async Task<bool> AddAsync(Product item)
         {

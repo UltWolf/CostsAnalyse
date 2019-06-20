@@ -91,7 +91,6 @@ namespace CostsAnalyse.Controllers
 
 
         [Authorize(Roles = "Administrator")]
-        [HttpGet("AutoAdd")]
         public async Task<IActionResult> AutoAdd()
         {
              

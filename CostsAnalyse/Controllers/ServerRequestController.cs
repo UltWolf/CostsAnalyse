@@ -19,7 +19,7 @@ namespace CostsAnalyse.Controllers
          [Authorize(Roles = "Administrator")]
                          public async Task<IActionResult> UpdateProxy()
         {
-            ProxyServerConnectionManagment.SerialiseProxyServersUA(true);
+            ProxyServerConnectionManagment.SerialiseProxyServers(true);
            
             return RedirectToAction("Index", "Products");
         }

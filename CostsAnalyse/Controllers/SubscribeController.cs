@@ -41,15 +41,8 @@ namespace CostsAnalyse.Controllers
                     var user = await GetCurrentUserAsync();
                     if (user != null)
                     {
-                    if (user.EmailConfirmed == true)
-                    {
-                        _subscribeRepository.Add(user, product);
+                    _subscribeRepository.Add(user, product);
                         return Ok();
-                    }
-                    else
-                    {
-                        return BadRequest("Email doesn`t confirmed");
-                    }
                     } 
                 
             }
