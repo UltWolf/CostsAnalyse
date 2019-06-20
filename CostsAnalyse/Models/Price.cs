@@ -19,6 +19,7 @@ namespace CostsAnalyse.Models
         public Price(decimal cost,Company company ) {
             this.Cost = cost;
             this.Date = DateTime.Now;
+            this.Company = company;
         }
         public Price(decimal cost, DateTime date)
         {

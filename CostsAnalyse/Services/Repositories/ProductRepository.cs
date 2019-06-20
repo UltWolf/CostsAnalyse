@@ -21,7 +21,25 @@ namespace CostsAnalyse.Services.Repositories
             try
             {
                 bool IsAdding = false;
-                var productFromContext = await _context.Products.FirstOrDefaultAsync(m=> m.Index == product.Index);
+                Product productFromContext;
+                if (product.Index != null)
+                {
+                    productFromContext = await _context.Products
+                           .Include(m => m.LastPrice)
+                           .ThenInclude(lp => lp.Company)
+                           .Include(p => p.Price)
+                           .ThenInclude(p => p.Company)
+                           .FirstOrDefaultAsync(m => m.Index == product.Index);
+                }
+                else
+                {
+                     productFromContext = await _context.Products
+                           .Include(m => m.LastPrice)
+                           .ThenInclude(lp => lp.Company)
+                           .Include(p => p.Price)
+                           .ThenInclude(p => p.Company)
+                           .FirstOrDefaultAsync(m => m.Name == product.Name);
+                }
 
                 if (productFromContext == null)
                 {
@@ -96,7 +114,7 @@ namespace CostsAnalyse.Services.Repositories
             try
             {
                 var currentCost = product.LastPrice[0].Cost;
-                var lastPrice = productFromContext.LastPrice.Single(m => m.Company.Equals(product.LastPrice[0].Company));
+                var lastPrice = productFromContext.LastPrice.SingleOrDefault(m => m.Company.Equals(product.LastPrice[0].Company));
 
                 if (lastPrice.Cost != product.LastPrice[0].Cost)
                 {
@@ -129,7 +147,12 @@ namespace CostsAnalyse.Services.Repositories
 
         public async Task<Product> GetAsync(object id)
         { 
-            return  await _context.Products.Include(m=>m.Subscribers)
+            return  await _context.Products
+                       .Include(m=>m.Subscribers)
+                       .Include(m=>m.LastPrice)
+                       .ThenInclude(lp=>lp.Company)
+                       .Include(p=>p.Price)
+                       .ThenInclude(p=>p.Company)
                        .FirstAsync(m=>m.Id==(int)id);
         }
 

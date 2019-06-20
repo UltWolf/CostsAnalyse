@@ -145,16 +145,22 @@ namespace CostsAnalyse.Services.PageDrivers
         }
         private Product CreateInstanseOfProduct(IElement div,string url)
         {
+            Product product = new Product();
             try
             {
                 FoxtrotParser fp = new FoxtrotParser();
                 var elementDetailLink = div.GetElementsByClassName("detail-link")[0];
                 string urlForPage = elementDetailLink.GetAttribute("href");
                 var img = elementDetailLink.GetElementsByTagName("img")[0];
-                var product = fp.GetProduct(urlForPage,  ref proxyList);
+                product = fp.GetProduct(urlForPage,  ref proxyList);
 
                 product.Name = div.GetAttribute("data-title");
-                product.Index = product.Name.Split("(")[1].Split(")")[0];
+                var massForIndex = product.Name.Split("(");
+                if (massForIndex.Length > 1)
+                {
+                    product.Index = product.Name.Split("(")[1].Split(")")[0];
+                }
+                
                 
                 var price = div.GetElementsByClassName("price")[0];
                 var priceWrapper = price.GetElementsByClassName("price__wrapper")[0];
@@ -164,7 +170,7 @@ namespace CostsAnalyse.Services.PageDrivers
 
                 if (discontWrapper.Length > 0)
                 {
-                    decimal oldPrice = getPriceFromNumb(price_relevant);
+                    decimal oldPrice = getPriceFromNumb(discontWrapper[0]);
                     product.LastPrice = new List<Price>() { new Price(currentPrice,oldPrice,
                                 new Company("Foxtrot", url)) { IsDiscont=true,Discont =  Math.Truncate(
                                                                                    (1-
@@ -183,7 +189,7 @@ namespace CostsAnalyse.Services.PageDrivers
             }
             catch (Exception ex)
             {
-                
+                fl.LogAsync(ex, product);
                 return null;
             }
         }

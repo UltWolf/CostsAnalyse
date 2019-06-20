@@ -7,7 +7,7 @@ namespace CostsAnalyse.Services.Abstracts
 {
     public interface ILogging
     {
-         Task LogAsync(Exception ex, object obj);
+         Task LogAsync(Exception ex, object obj, [System.Runtime.CompilerServices.CallerMemberName] string memberName = "");
          Task<String[]> ReadAsync();
          Task<String[]> ReadAsync(DateTime date);
     }

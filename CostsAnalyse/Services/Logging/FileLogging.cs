@@ -1,23 +1,27 @@
 ﻿using CostsAnalyse.Services.Abstracts;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Helpers;
 
 namespace CostsAnalyse.Services.Logging
 {
     public class FileLogging : ILogging
     {
         private const int DefaultBufferSize = 4096;
-        public async Task LogAsync(Exception ex, object obj)
+        public async Task LogAsync(Exception ex, object obj, [System.Runtime.CompilerServices.CallerMemberName] string calledFrom= "")
         {
             string pathToFile = "Logs/" + DateTime.Today.ToString("d").Replace("/", "") + ".log";
             string message = " ";
             message += DateTime.Now + "  -  ";
             message += ex.Message + ";\n";
-            message += "State: " + obj.ToString();
+             
+            message += "State: " + JsonConvert.SerializeObject(obj)+"\n";
+            message += "Exception method: " + calledFrom + "\n\n";
             var buffer = Encoding.UTF8.GetBytes(message);
                 using (FileStream fs = new FileStream(pathToFile, FileMode.Append,FileAccess.Write,FileShare.None, buffer.Length, true))
                 {

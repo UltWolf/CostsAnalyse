@@ -10,12 +10,15 @@ namespace TestsForCostsAnalyse.Tests.ParsersTests.FoxtrotTest
 {
     public class FoxtrotTests
     {
-        [Fact]
-        public void ProductsAreNotNull()
+        [Theory]
+        [InlineData("/ru/shop/mobilnye_telefony_huawei_y6-2019-dual-sim-midnight-black.html")]
+        [InlineData("/ru/shop/mobilnye_telefony_xiaomi_redmi-note-7-3-32gb-space-black.html")]
+        [InlineData("/ru/shop/mobilnye_telefony_huawei_p30-pro-6-128gb-breathing-srystal.html")]
+        public void ProductsAreNotNull(string url)
         {
             FoxtrotParser rpd = new FoxtrotParser();
             List<String> proxys = ProxyServerConnectionManagment.GetProxyHrefs();
-            Assert.NotNull(rpd.GetProduct("/ru/shop/mobilnye_telefony_samsung_sm-j320h-galaxy-j3-duos-zdd-gold.html?sc_content=13870_2",ref proxys));
+            Assert.NotNull(rpd.GetProduct(url,ref proxys));
 
         }
 

@@ -43,7 +43,8 @@
 }else{
        <li><a asp-area="" asp-controller="Profile" asp-action="Index">Профіль</a></li> 
          <li><a asp-area="" asp-controller="User" asp-action="LogOff">Вийти </a></li> 
-}  <li> <input type="textbox" id="search" class="glyphicon-search" onchange="" style="color:black"/> </li> 
+}  <li> <input type="textbox" id="search" class="glyphicon-search" onchange="" style="color:black"/> </li>
+<div class="searchResult"></div>
                 </ul>
             </div>
         </div>
@@ -95,9 +96,12 @@
                 method: "GET",
                 processData: false,
                 success: function (data) {
+                var tds = ""
                    for(var i = 0;i<data.length;i++){
-                   console.log(data[i].name +" "+ data[i].urlimage+" "+data[i].id)
+                   tds+="<td>"+data[i].name+"</td><td> <a href =\"products\\details\\"+data[i].id+"\"><img src=\""+ data[i].urlImage+"\"/></a></td><tr>"
                    }
+                var table = "<table>"+tds+"</table>";
+                    document.getElementsByClassName("searchResult")[0].innerHTML = table;
                 },
                 error: function (err) {
 console.log(err);
