@@ -25,7 +25,7 @@ public class AuthMessageSender
         {
             await client.ConnectAsync("smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect);
 
-            await client.AuthenticateAsync("ultwolf@gmail.com", "230398Vetal");
+            await client.AuthenticateAsync("", "");
 
             await client.SendAsync(emailMessage);
 

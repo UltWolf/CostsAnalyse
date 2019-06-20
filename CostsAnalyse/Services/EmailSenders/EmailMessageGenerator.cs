@@ -14,5 +14,9 @@ namespace CostsAnalyse.Services.EmailSenders
                     message += "<a href = "+path+"> Підтвердити</a>";
             return message;
         }
+        public static string GenerateResetPasswordMessage(string url)
+        {
+            return $"Для того щоб скинути пароль, перейдіть по посиланню: <a href='{url}'>link</a>";
+        }
     }
 }
