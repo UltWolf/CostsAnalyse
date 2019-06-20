@@ -19,7 +19,7 @@ namespace CostsAnalyse.Services.Initializers
             if (user == null)
             {
                 UserApp userApp = new UserApp() { Email = "ultwolf@gmail.com", UserName = "UltWolf", Country = "Ukraine" };
-                await UserManager.CreateAsync(userApp, "123456Vitalka");
+                UserManager.CreateAsync(userApp, "123456Vitalka");
             }
         }
     }
