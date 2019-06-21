@@ -185,3 +185,26 @@ footer{
     height: 200px;
     background-position: 0px -600px;
 }
+.searchResult {
+    visibility: hidden;
+    position: absolute;
+    background: rgba(200, 200, 200,0.4);
+    padding: 40px;
+    border: 1px black solid;
+    margin-top: 100px;
+    border-radius: 10px;
+    box-shadow:   0 -9px 15px -4px black,   7px 0 15px -4px black,  0px 10px 15px -4px black,  -12px 0 15px -4px black;
+    
+}
+    .searchResult > table > tbody > tr > td {
+        padding: 10px;
+        text-shadow: 0 0 rgb(40,40,40);
+        color:black;
+    }
+    .searchResult > table > tbody > tr > td > a > img {
+        width: 120px;
+        border-radius: 20px; 
+    }
+.visible{
+    visibility:visible;
+}

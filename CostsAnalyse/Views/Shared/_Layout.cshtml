@@ -80,35 +80,45 @@
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
     <script>
-        $("input").keyup(function(e){
-            e.preventDefault(); 
+        $("input").keyup(function (e) {
+            e.preventDefault();
             var partOfText = $("input").val()
-            if (e.keyCode == 13) {
-                document.location.href = "/search/"+partOfText;
-            }
-            else{
-            ajaxUrl = "/FastSearch/"+partOfText;
-            $.ajax({
-                type: "GET",
-                url: ajaxUrl,
-                cache: false,
-                contentType: false,
-                method: "GET",
-                processData: false,
-                success: function (data) {
-                var tds = ""
-                   for(var i = 0;i<data.length;i++){
-                   tds+="<td>"+data[i].name+"</td><td> <a href =\"products\\details\\"+data[i].id+"\"><img src=\""+ data[i].urlImage+"\"/></a></td><tr>"
-                   }
-                var table = "<table>"+tds+"</table>";
-                    document.getElementsByClassName("searchResult")[0].innerHTML = table;
-                },
-                error: function (err) {
-console.log(err);
+            if (partOfText.length > 2) {
+                if (e.keyCode == 13) {
+                    document.location.href = "/search/" + partOfText;
                 }
-            })
-            } 
-        });
+                else {
+                    ajaxUrl = "/FastSearch/" + partOfText;
+                    $.ajax({
+                        type: "GET",
+                        url: ajaxUrl,
+                        cache: false,
+                        contentType: false,
+                        method: "GET",
+                        processData: false,
+                        success: function (data) {
+                            if (data.length > 0) {
+                                var tds = ""
+                                for (var i = 0; i < data.length; i++) {
+                                    tds += "<td>" + data[i].name + "</td><td> <a href =\"products\\details\\" + data[i].id + "\"><img src=\"" + data[i].urlImage + "\"/></a></td><tr>"
+                                }
+                                var table = "<table>" + tds + "</table>";
+                                document.getElementsByClassName("searchResult")[0].innerHTML = table;
+                                if (!document.getElementsByClassName("searchResult")[0].classList.contains("visible")) {
+                                    document.getElementsByClassName("searchResult")[0].classList.add("visible");
+                                }
+                            }
+                        },
+                        error: function (err) {
+                            console.log(err);
+                        }
+                    })
+                }
+            }
+            else {
+                    document.getElementsByClassName("searchResult")[0].classList.remove("visible");
+                }
+            });
         
     </script>
     @RenderSection("Scripts", required: false)
