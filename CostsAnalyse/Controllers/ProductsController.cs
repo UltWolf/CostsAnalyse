@@ -54,7 +54,7 @@ namespace CostsAnalyse.Controllers
 
                 var allProducts = this._context.Products;
                 int countProducts = await allProducts.CountAsync();
-                int pageSize = 10;
+                int pageSize = 9;
 
                 ViewData["TotalPages"] = (int)Math.Ceiling(countProducts / (double)pageSize);
                 if (page - 1 >= 0)

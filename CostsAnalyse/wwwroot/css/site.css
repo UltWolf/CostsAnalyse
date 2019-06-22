@@ -17,15 +17,7 @@ body {
     align-content: space-between;
     justify-content: space-between;
   }
-  .item {
-    display: contents;
-  }
-  .item > div {
-    width: 300px;
-    border: 1px solid black;
-    text-align: center;
-    margin: 10px;
-  }
+ 
   
   .item:nth-child(3n)::after {
     content: '';

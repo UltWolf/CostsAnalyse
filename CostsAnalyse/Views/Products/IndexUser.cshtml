@@ -1,47 +1,62 @@
 ﻿@model IEnumerable<CostsAnalyse.Models.Product>
 
-@{
+    @{
     ViewData["Title"] = "Index";
-}
+    }
+    <link rel="stylesheet" href="~/css/Products/index/content.css" /> 
 
-<h2>Index</h2>
 
-
-<div class="container">
-    @foreach (var item in Model)
-    {
+    <div class="content">
+        @foreach (var item in Model)
+        {
         <div class="item">
-            <div>
-
+            <div class="item_image">
                 @Html.DisplayFor(modelItem => item.Name)<br>
                 <a asp-action="Details" asp-route-id="@item.Id">
                     <img src=@Html.DisplayFor(modelItem => item.UrlImage)>
                 </a><br>
-                @Html.DisplayFor(modelItem => item.Price[item.Price.Count - 1].Cost);
-                @if (item.Price[item.Price.Count - 1].IsDiscont)
-                {
+            </div>
+            <div class="inform_down">
+                <div class="price">
+                    <div class="current_price">
+                        @Html.DisplayFor(modelItem => item.Price[item.Price.Count - 1].Cost);
+                    </div>
+                    @if (item.Price[item.Price.Count - 1].IsDiscont)
+                    { <div class="old_price">
+                        @Html.DisplayFor(modelItem => item.Price[item.Price.Count - 1].OldCost);
+                    </div>
+                    <div class="discont_wrap">
+                        <p>@item.Price[item.Price.Count - 1].Discont </p>
+                        <img src="~/images/Discont.png" class="discont" />
+                    </div>
 
-                    @Html.DisplayFor(modelItem => item.Price[item.Price.Count - 1].OldCost);
-                }
+                    }
+                </div>
+                <div>
+                    <a href="" class="btn btn-success">Детальніше</a>
+                </div>
             </div>
         </div>
-    }
-</div> 
-<span>
-    @if (ViewData["PreviusPage"]!=null)
-    {
-        <a asp-action="Index" asp-route-page=@((int)ViewData["PreviusPage"]))>
-            <<
-        </a>
-    }
-    <p>
-        @(((int)ViewData["CurrentPage"])+1)
-    </p>
-     @if (ViewData["NextPage"]!=null)
-    {
-        <a asp-action="Index" asp-route-page=@(ViewData["NextPage"])>
-            >>
-        </a>
-    }
-    </span>
-                 
+        }
+        <div class="pagination">
+            <div class="pagination_wrap"> 
+                    @if (ViewData["PreviusPage"]!=null)
+                    {
+                    <a asp-action="Index" asp-route-page=@((int)ViewData["PreviusPage"]))>
+                        <<
+                    </a>
+                    }
+                    <p>
+                        @(((int)ViewData["CurrentPage"])+1)
+                    </p>
+                    @if (ViewData["NextPage"]!=null)
+                    {
+                    <a asp-action="Index" asp-route-page=@(ViewData["NextPage"])>
+                        >>
+                    </a>
+                    } 
+            </div>
+        </div>
+    </div>
+   
+    
