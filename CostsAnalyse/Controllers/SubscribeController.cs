@@ -21,20 +21,19 @@ namespace CostsAnalyse.Controllers
         private readonly FileLogging _logging;
         private readonly SubscribeRepository _subscribeRepository;
         private readonly UserManager<UserApp> _userManager;
-        private readonly ProductRepository _productRepository;
+        private readonly ProductRepository _productRepository; s
         private Task<UserApp> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
         public SubscribeController(ApplicationContext context, UserManager<UserApp> userManager)
         {
             _context = context;
             _userManager = userManager;
-            _logging = new FileLogging();
+            _logging = new FileLogging(); 
             _subscribeRepository = new SubscribeRepository(_context);
             _productRepository = new ProductRepository(_context);
         }
         [HttpGet("Subscribe/{id}")]
         public async Task<IActionResult> Subscribe(int id)
-        {
-
+        { 
             var product =  await _productRepository.GetAsync(id);
             if (product != null)
             { 
