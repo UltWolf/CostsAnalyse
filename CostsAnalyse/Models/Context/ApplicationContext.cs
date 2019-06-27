@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,9 +18,34 @@ namespace CostsAnalyse.Models.Context
         //public ApplicationContext(DbContextOptions options) : base(options) { }
         public ApplicationContext() { }
        
+        
         public ApplicationContext(DbContextOptions<ApplicationContext> dbContext) : base(dbContext)
         {
 
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            var connString = GetConnectionString();  
+
+            optionsBuilder.UseNpgsql(connString);
+        }
+        private string GetConnectionString()
+        {
+            var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+            var databaseUri = new Uri(databaseUrl);
+            var userInfo = databaseUri.UserInfo.Split(':');
+
+            var builder = new NpgsqlConnectionStringBuilder
+            {
+                Host = databaseUri.Host,
+                Port = databaseUri.Port,
+                Username = userInfo[0],
+                Password = userInfo[1],
+                Database = databaseUri.LocalPath.TrimStart('/')
+            };
+
+            return builder.ToString();
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -7,8 +7,7 @@ using CostsAnalyse.Models;
 using CostsAnalyse.Models.Context;
 using CostsAnalyse.Services.Abstracts;
 using CostsAnalyse.Services.Initializers;
-using CostsAnalyse.Services.Logging;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using CostsAnalyse.Services.Logging; 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -59,8 +58,7 @@ namespace CostsAnalyse
                .AddEntityFrameworkStores<ApplicationContext>()
                .AddDefaultTokenProviders(); 
            
-            services.AddDbContext<ApplicationContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("StringConnection"), x => x.MigrationsAssembly("CostsAnalyse")));
+            services.AddDbContext<ApplicationContext>();
             services.AddAuthentication().AddCookie();
             services.AddSingleton<ILogging, FileLogging>();
             services.AddMvc(); 

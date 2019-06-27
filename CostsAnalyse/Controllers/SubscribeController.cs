@@ -21,7 +21,7 @@ namespace CostsAnalyse.Controllers
         private readonly FileLogging _logging;
         private readonly SubscribeRepository _subscribeRepository;
         private readonly UserManager<UserApp> _userManager;
-        private readonly ProductRepository _productRepository; s
+        private readonly ProductRepository _productRepository;  
         private Task<UserApp> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
         public SubscribeController(ApplicationContext context, UserManager<UserApp> userManager)
         {

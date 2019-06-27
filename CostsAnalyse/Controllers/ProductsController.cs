@@ -12,7 +12,6 @@ using CostsAnalyse.Services;
 using CostsAnalyse.Extensions;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using CostsAnalyse.Services.Abstracts;
 using CostsAnalyse.Services.Repositories;
 

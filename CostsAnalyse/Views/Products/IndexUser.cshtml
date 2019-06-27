@@ -43,7 +43,7 @@
                     @if (ViewData["PreviusPage"]!=null)
                     {
                     <a asp-action="Index" asp-route-page=@((int)ViewData["PreviusPage"]))>
-                        <<
+                        &lt;
                     </a>
                     }
                     <p>
@@ -52,7 +52,7 @@
                     @if (ViewData["NextPage"]!=null)
                     {
                     <a asp-action="Index" asp-route-page=@(ViewData["NextPage"])>
-                        >>
+                        &gt;
                     </a>
                     } 
             </div>
