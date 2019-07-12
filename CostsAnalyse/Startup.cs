@@ -7,7 +7,11 @@ using CostsAnalyse.Models;
 using CostsAnalyse.Models.Context;
 using CostsAnalyse.Services.Abstracts;
 using CostsAnalyse.Services.Initializers;
-using CostsAnalyse.Services.Logging; 
+using CostsAnalyse.Services.Logging;
+using CostsAnalyse.Services.ScheduleDriver;
+using Hangfire;
+using Hangfire.PostgreSql;
+using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -56,13 +60,21 @@ namespace CostsAnalyse
                 o.Password.RequiredLength = 6;
             })
                .AddEntityFrameworkStores<ApplicationContext>()
-               .AddDefaultTokenProviders(); 
-           
+               .AddDefaultTokenProviders();
+            services.AddHangfire((config)=> {
+                var options = new PostgreSqlStorageOptions
+                {
+                    PrepareSchemaIfNecessary = false,
+                    QueuePollInterval = TimeSpan.FromHours(10)
+                };
+                config.UsePostgreSqlStorage("Server=localhost;Port=5432;Database=costsanalyse;User Id=ultwolf;Password=230398",options);
+                
+            });
             services.AddDbContext<ApplicationContext>();
             services.AddAuthentication().AddCookie();
             services.AddSingleton<ILogging, FileLogging>();
             services.AddServerSideBlazor();
-           
+            services.AddScoped<ITask, TaskDriver>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0); 
             var provider = services.BuildServiceProvider();
             //lately cut`s in another class for initialization
@@ -103,6 +115,12 @@ namespace CostsAnalyse
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapBlazorHub();
             });
+            app.UseHangfireServer(new BackgroundJobServerOptions { WorkerCount = 1 });
+            GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 0 });
+            app.UseHangfireDashboard();
+            
+            ScheduleDriver.ScheduleReccuringJob();
+
         }
     }
 }
