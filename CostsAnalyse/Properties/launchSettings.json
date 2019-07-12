@@ -10,16 +10,19 @@
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
-      "launchBrowser": true,
+      "launchBrowser": false,
       "environmentVariables": {
         "CopyLocal": "true",
+        "DATABASE_URL": "Server=localhost;Port=5432;Database=costsanalyse;User Id=ultwolf;Password=230398;",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "CostsAnalyse": {
       "commandName": "Project",
-      "launchBrowser": true,
+      "launchBrowser":false,
       "environmentVariables": {
+        "DATABASE_URL": "Server=localhost;Port=5432;Database=costsanalyse;User Id=ultwolf;Password=230398;",
+        "Port": 44382,
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "https://localhost:5001;http://localhost:5000"

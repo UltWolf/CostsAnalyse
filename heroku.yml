@@ -1,0 +1,11 @@
+setup:
+  addons:
+    - plan: heroku-postgresql
+      as: DATABASE
+build:
+  docker:
+    web: Dockerfile
+  config:
+    ASPNETCORE_ENVIRONMENT: development
+run:
+  web: dotnet CostsAnalyse.dll

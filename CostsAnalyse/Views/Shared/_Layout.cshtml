@@ -34,17 +34,19 @@
                     <li><a asp-area="" asp-controller="Home" asp-action="About">Про проект</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Контакти</a></li>
                 </ul>
-                <ul class="nav navbar-nav navbar-right"> @if(!User.Identity.IsAuthenticated) 
-{
-    
+                <ul class="nav navbar-nav navbar-right">
+                    @if(!User.Identity.IsAuthenticated)
+                    {
+
 
                     <li><a asp-area="" asp-controller="User" asp-action="Register">Реєстрація</a></li>
                     <li><a asp-area="" asp-controller="User" asp-action="Login">Вхід</a></li>
-}else{
-       <li><a asp-area="" asp-controller="Profile" asp-action="Index">Профіль</a></li> 
-         <li><a asp-area="" asp-controller="User" asp-action="LogOff">Вийти </a></li> 
-}  <li> <input type="textbox" id="search" class="glyphicon-search" onchange="" style="color:black"/> </li>
-<div class="searchResult"></div>
+                    }else{
+                    <li><a asp-area="" asp-controller="Profile" asp-action="Index">Профіль</a></li>
+                    <li><a asp-area="" asp-controller="User" asp-action="LogOff">Вийти </a></li>
+                    }
+                    <li> <input type="textbox" id="search" class="glyphicon-search" onchange="" style="color:black" /> </li>
+                    <div class="searchResult"></div>
                 </ul>
             </div>
         </div>
@@ -53,7 +55,7 @@
     <partial name="_CookieConsentPartial" />
 
     <div class="container body-content">
-        @RenderBody() 
+        @RenderBody()
         <footer>
             <p>&copy; 2019 - CostsAnalyse</p>
         </footer>
@@ -63,6 +65,7 @@
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
+        <script src="_framework/blazor.server.js"></script>
     </environment>
     <environment exclude="Development">
         <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
@@ -116,11 +119,12 @@
                 }
             }
             else {
-                    document.getElementsByClassName("searchResult")[0].classList.remove("visible");
-                }
-            });
-        
+                document.getElementsByClassName("searchResult")[0].classList.remove("visible");
+            }
+        });
+
     </script>
+
     @RenderSection("Scripts", required: false)
 </body>
 </html>

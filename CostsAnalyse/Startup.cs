@@ -61,7 +61,9 @@ namespace CostsAnalyse
             services.AddDbContext<ApplicationContext>();
             services.AddAuthentication().AddCookie();
             services.AddSingleton<ILogging, FileLogging>();
-            services.AddMvc(); 
+            services.AddServerSideBlazor();
+           
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0); 
             var provider = services.BuildServiceProvider();
             //lately cut`s in another class for initialization
             StartsInitialize.Initialize();
@@ -94,13 +96,12 @@ namespace CostsAnalyse
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-            app.UseAuthentication(); 
-
-            app.UseMvc(routes =>
+            app.UseAuthentication();
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapBlazorHub();
             });
         }
     }

@@ -26,9 +26,9 @@ namespace CostsAnalyse.Models.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var connString = GetConnectionString();  
+           
 
-            optionsBuilder.UseNpgsql(connString);
+            optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=costsanalyse;User Id=ultwolf;Password=230398;");
         }
         private string GetConnectionString()
         {
