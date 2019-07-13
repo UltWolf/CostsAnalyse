@@ -61,21 +61,14 @@ namespace CostsAnalyse
             })
                .AddEntityFrameworkStores<ApplicationContext>()
                .AddDefaultTokenProviders();
-            services.AddHangfire((config)=> {
-                var options = new PostgreSqlStorageOptions
-                {
-                    PrepareSchemaIfNecessary = false,
-                    QueuePollInterval = TimeSpan.FromHours(10)
-                };
-                config.UsePostgreSqlStorage("Server=localhost;Port=5432;Database=costsanalyse;User Id=ultwolf;Password=230398",options);
-                
-            });
-            services.AddDbContext<ApplicationContext>();
+           
+            
+            services.AddDbContext<ApplicationContext>(options=> options.UseSqlServer(Configuration.GetConnectionString("StringConnection")));
             services.AddAuthentication().AddCookie();
             services.AddSingleton<ILogging, FileLogging>();
             services.AddServerSideBlazor();
             services.AddScoped<ITask, TaskDriver>();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0); 
+            services.AddMvc(); 
             var provider = services.BuildServiceProvider();
             //lately cut`s in another class for initialization
             StartsInitialize.Initialize();
@@ -88,6 +81,15 @@ namespace CostsAnalyse
             AdminInitialize adminInitialize = new AdminInitialize();
             adminInitialize.Initialize(provider);
             LoggingProvider.InitiateFolder();
+            services.AddHangfire((config) => {
+                var options = new SqlServerStorageOptions
+                {
+                    PrepareSchemaIfNecessary = true,
+                    QueuePollInterval = TimeSpan.FromHours(10)
+                };
+                config.UseSqlServerStorage("Server=(localdb)\\mssqllocaldb;Database=CostsAnalyseDB;Trusted_Connection=True;MultipleActiveResultSets=true", options);
+
+            });
 
 
         }
@@ -104,8 +106,7 @@ namespace CostsAnalyse
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
-
-            app.UseHttpsRedirection();
+             
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseAuthentication();
@@ -117,9 +118,9 @@ namespace CostsAnalyse
             });
             app.UseHangfireServer(new BackgroundJobServerOptions { WorkerCount = 1 });
             GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 0 });
-            app.UseHangfireDashboard();
-            
+            app.UseHangfireDashboard("/dashboard");
             ScheduleDriver.ScheduleReccuringJob();
+             
 
         }
     }

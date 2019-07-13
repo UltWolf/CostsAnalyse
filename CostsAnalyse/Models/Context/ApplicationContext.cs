@@ -24,12 +24,7 @@ namespace CostsAnalyse.Models.Context
 
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-           
-
-            optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=costsanalyse;User Id=ultwolf;Password=230398;");
-        }
+    
         private string GetConnectionString()
         {
             var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
