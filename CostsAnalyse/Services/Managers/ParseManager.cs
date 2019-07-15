@@ -11,7 +11,7 @@ namespace CostsAnalyse.Services.Managers
 {
     public class ParseManager
     {
-        private StateManager StateManager = new StateManager();
+        private StateManager _stateManager = new StateManager();
         private List<string> Proxys = new List<string>();
 
         public ParseManager()
@@ -19,9 +19,10 @@ namespace CostsAnalyse.Services.Managers
             Proxys = new ProxyBuilder().GenerateProxy().Build();
         }
 
-        public Product Parse(string url, int index, Store type)
+        public Product Parse(ParseState ps,string url)
         {
-            switch (type)
+            _stateManager.SaveState(ps);
+            switch (ps.Type)
             {
                 case Store.Comfy:
                     return new ComfyParser().GetProduct(url, ref Proxys);
