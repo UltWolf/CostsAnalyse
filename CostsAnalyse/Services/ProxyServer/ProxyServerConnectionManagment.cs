@@ -35,52 +35,8 @@ namespace CostsAnalyse.Services.ProxyServer
                 }
             }
         }
-        public static   void SerialiseProxyServers(bool IsForce) {
-            try
-            {
-                if (File.Exists("proxyList.txt") || IsForce)
-                {
-                    List<String> proxyList = new List<string>();
-                    var httpRequest = (HttpWebRequest)HttpWebRequest.Create("http://foxtools.ru/Proxy?country=RU&al=True&am=True&ah=True&ahs=True&http=True&https=True");
-                    httpRequest.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8";
-                    httpRequest.KeepAlive = true;
-                    httpRequest.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:65.0) Gecko/20100101 Firefox/65.0";
-
-                    var httpResponse = httpRequest.GetResponse();
-                    string html = "";
-                    using (Stream stream = httpResponse.GetResponseStream())
-                    {
-                        using (StreamReader sr = new StreamReader(stream))
-                        {
-                            html = sr.ReadToEnd();
-                        }
-                    }
-                    var parser = new HtmlParser();
-                    var body = parser.ParseDocument(html);
-                    var table = body.GetElementById("theProxyList");
-
-                    var trs = table.GetElementsByTagName("tr");
-                    for (int i = 1; i < trs.Length; i++)
-                    {
-                        var tds = trs[i].GetElementsByTagName("td");
-                        string proxy = tds[1].TextContent;
-                        string port = tds[2].TextContent;
-                        proxyList.Add(proxy + ":" + port);
-                    }
-                    using (FileStream fs = new FileStream("proxyList.txt", FileMode.Create, FileAccess.Write))
-                    {
-
-                        bf = new BinaryFormatter();
-                        bf.Serialize(fs, proxyList);
-                    }
-                }
-            }catch(Exception ex)
-            {
-                FileLogging fl = new FileLogging();
-                fl.LogAsync(ex,new object());
-            }
-        }
-        public static void SerialiseProxyServersUA(bool IsForce){
+      
+        private static void SerialiseProxyServersUA(bool IsForce){
              if (File.Exists("proxyList.txt") || IsForce)
             {
                 List<String> proxyList = new List<string>();
@@ -141,7 +97,7 @@ namespace CostsAnalyse.Services.ProxyServer
             }
         }
         
-        private static void GenerateProxy() {
+        public static void GenerateProxy() {
             if (!File.Exists("proxyList.txt"))
             {
                 SerialiseProxyServersUA(true);

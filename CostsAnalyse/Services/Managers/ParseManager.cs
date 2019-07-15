@@ -1,32 +1,43 @@
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Runtime.Serialization.Formatters.Binary;
+using CostsAnalyse.Models;
 using CostsAnalyse.Models.Data;
 using CostsAnalyse.Services.Parses;
+using CostsAnalyse.Services.ProxyServer;
 
 namespace CostsAnalyse.Services.Managers
 {
     public class ParseManager
     {
         private StateManager StateManager = new StateManager();
+        private List<string> Proxys = new List<string>();
 
-        public void  Parse(string url,int index, Store type)
+        public ParseManager()
+        {
+            Proxys = new ProxyBuilder().GenerateProxy().Build();
+        }
+
+        public Product Parse(string url, int index, Store type)
         {
             switch (type)
             {
                 case Store.Comfy:
-                    var product = new ComfyParser().GetProduct(url);
-                    
+                    return new ComfyParser().GetProduct(url, ref Proxys);
                     break;
-                 case Store.Eldorado:
-                     break;
-                 case Store.Foxtrot:
-                     break;
-                 case Store.Rozetka:
-                     break;
-                 default:
-                     break;
+                case Store.Eldorado:
+                    throw new NotImplementedException();
+                    break;
+                case Store.Foxtrot:
+                    return new FoxtrotParser().GetProduct(url, ref Proxys);
+                    break;
+                case Store.Rozetka:
+                    return new RozetkaParser().GetProduct(url, ref Proxys);
+                    break; 
+                default:
+                    throw new NotImplementedException();
             }
-            
         }
     }
 }
