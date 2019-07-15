@@ -10,8 +10,7 @@ using CostsAnalyse.Services.ProxyServer;
 namespace CostsAnalyse.Services.Managers
 {
     public class ParseManager
-    {
-        private StateManager _stateManager = new StateManager();
+    { 
         private List<string> Proxys = new List<string>();
 
         public ParseManager()
@@ -19,10 +18,9 @@ namespace CostsAnalyse.Services.Managers
             Proxys = new ProxyBuilder().GenerateProxy().Build();
         }
 
-        public Product Parse(ParseState ps,string url)
-        {
-            _stateManager.SaveState(ps);
-            switch (ps.Type)
+        public Product Parse(Store type,string url)
+        { 
+            switch (type)
             {
                 case Store.Comfy:
                     return new ComfyParser().GetProduct(url, ref Proxys);

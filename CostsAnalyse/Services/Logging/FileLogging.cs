@@ -23,7 +23,7 @@ namespace CostsAnalyse.Services.Logging
             message += "State: " + JsonConvert.SerializeObject(obj)+"\n";
             message += "Exception method: " + calledFrom + "\n\n";
             var buffer = Encoding.UTF8.GetBytes(message);
-                using (FileStream fs = new FileStream(pathToFile, FileMode.Append,FileAccess.Write,FileShare.None, buffer.Length, true))
+            using (FileStream fs = new FileStream(pathToFile, FileMode.Append,FileAccess.Write,FileShare.None, buffer.Length, true))
                 {
                 await fs.WriteAsync(buffer);
                 } 

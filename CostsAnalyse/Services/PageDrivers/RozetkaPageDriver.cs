@@ -10,8 +10,14 @@ using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Threading.Tasks;
+using AngleSharp.Common;
+using AngleSharp.Dom;
+using AngleSharp.Html.Dom;
 using CostsAnalyse.Services.ProxyServer;
 using CostsAnalyse.Models.Context;
+using CostsAnalyse.Models.Data;
+using CostsAnalyse.Services.Logging;
+using CostsAnalyse.Services.Managers;
 
 namespace CostsAnalyse.Services.PageDrivers
 {
@@ -22,7 +28,7 @@ namespace CostsAnalyse.Services.PageDrivers
         private readonly Repositories.ProductRepository _productRepository;
         public RozetkaPageDriver(ApplicationContext Context)
         {
-            this.proxyList = ProxyServerConnectionManagment.GetProxyHrefs();
+            this.proxyList = new ProxyBuilder().GenerateProxy().Build();
             this._context = Context;
             this._productRepository = new Repositories.ProductRepository(_context);
             GenerateHrefs();
@@ -39,18 +45,13 @@ namespace CostsAnalyse.Services.PageDrivers
         }
         public void GetProducts()
         {
-
-            var pages = GetPages();
-            List<Product> products = new List<Product>();
-            foreach (var page in pages)
+            var pages = GetPages(); 
+            var _stateManager = new StateManager();
+            for(int i=0;i<pages.Count;i++)
             {
-                if (proxyList.Count <= 1)
-                {
-                    break;
-                }
-                ParseProductsFromPage(page, 0);
-            }
-
+                _stateManager.SaveState(new ParseState(i,Store.Rozetka));
+                ParseProductsFromPage(pages.GetItemByIndex(i), i);
+            } 
         }
         public void ParseProductsFromPage(string url, int index)
         {
@@ -59,70 +60,102 @@ namespace CostsAnalyse.Services.PageDrivers
             {
                 url += "/page=" + index + "/";
             }
-            ThreadDelay.Delay();
-
+            ThreadDelay.Delay(); 
             try
             {
-                WebRequest WR = WebRequest.Create(url);
-                WR.Method = "GET";
-                string[] fulladress = proxyList[++index].Split(":");
-                var (adress, port) = (fulladress[0], int.Parse(fulladress[1]));
-                WebProxy myproxy = new WebProxy(adress, port);
-                myproxy.BypassProxyOnLocal = false;
-                WR.Proxy = myproxy;
-                WebResponse response = WR.GetResponse();
-                string html;
-                using (Stream stream = response.GetResponseStream())
-                {
-                    using (StreamReader reader = new StreamReader(stream))
-                    {
-                        html = reader.ReadToEnd();
-                    }
-                }
-
-                HtmlParser parser = new HtmlParser();
-                var parseElement = parser.ParseDocument(html);
-                var divsWithProduct = parseElement.GetElementsByClassName("g-i-tile-catalog");
+                IHtmlDocument document;
+                var divsWithProduct = GetPageWithProduct(url,out document); 
+                GetProductsFromPage(divsWithProduct);
+                var paginator = document.GetElementsByClassName("paginator-catalog");
+                string page = GetNumberPage(paginator);
                 
-                RozetkaParser rp = new RozetkaParser();
-                foreach (var div in divsWithProduct)
-                {
-                    try
-                    {
-                        string urlForPage = div.GetElementsByClassName("g-i-tile-i-title")[0].GetElementsByTagName("a")[0].GetAttribute("href");
-                        var product = rp.GetProduct(urlForPage, ref proxyList);
-                        _productRepository.AddProduct(product);
-
-                    }
-                    catch (Exception ex)
-                    {
-                    }
-                }
-                var paginator = parseElement.GetElementsByClassName("paginator-catalog");
-                string page = "";
-                if (paginator.Length > 0)
-                {
-                    var lis = paginator[0].GetElementsByTagName("li");
-                    for (int i = 0; i < lis.Length; i++)
-                    {
-                        if (lis[i].ClassList.Contains("active"))
-                        {
-                            page = lis[++i].GetElementsByTagName("span")[0].TextContent;
-                            break;
-                        }
-                    }
-                }
                 if (page != "")
                 {
                     ParseProductsFromPage(baseUrl, int.Parse(page));
                 }
-            }
-            
+            } 
             catch (Exception ex)
             {
- 
+               Logging.FileLogging fl = new FileLogging();
+               fl.LogAsync(ex, new {url, index});
             } 
         }
+        
+        private IHtmlCollection<IElement> GetPageWithProduct(string url,out IHtmlDocument htmlDocument)
+        {
+            
+            foreach (var proxy in proxyList)
+            {
+                try
+                {
+                    WebRequest WR = WebRequest.Create(url);
+                    WR.Method = "GET";
+                    string[] fulladress = proxy.Split(":");
+                    var (adress, port) = (fulladress[0], int.Parse(fulladress[1]));
+                    WebProxy myproxy = new WebProxy(adress, port);
+                    myproxy.BypassProxyOnLocal = false;
+                    WR.Proxy = myproxy;
+                    WebResponse response = WR.GetResponse();
+                    string html;
+                    using (Stream stream = response.GetResponseStream())
+                    {
+                        using (StreamReader reader = new StreamReader(stream))
+                        {
+                            html = reader.ReadToEnd();
+                        }
+                    }
+
+                    HtmlParser parser = new HtmlParser();
+                    htmlDocument = parser.ParseDocument(html);
+                    return   htmlDocument.GetElementsByClassName("g-i-tile-catalog");
+                }
+                catch (Exception ex)
+                { 
+                }
+            }
+
+            throw new Exception("Proxy isn`t working");
+        }
+
+        private void GetProductsFromPage(IHtmlCollection<IElement> divsWithProduct)
+        {
+           
+            foreach (var div in divsWithProduct)
+            { 
+                GetProductFromDiv(div);
+            }
+        }
+
+        private void GetProductFromDiv(IElement div)
+        {
+            try
+            {   ParseManager parseManager = new ParseManager();
+                string urlForPage = div.GetElementsByClassName("g-i-tile-i-title")[0].GetElementsByTagName("a")[0].GetAttribute("href");
+                var product = parseManager.Parse( Store.Rozetka,urlForPage);
+                _productRepository.AddProduct(product); 
+            }
+            catch (Exception ex)
+            {
+            } 
+        }
+
+        private string GetNumberPage(IHtmlCollection<IElement> paginator)
+        {
+            if (paginator.Length > 0)
+            {
+                var lis = paginator[0].GetElementsByTagName("li");
+                for (int i = 0; i < lis.Length; i++)
+                {
+                    if (lis[i].ClassList.Contains("active"))
+                    {
+                        return lis[++i].GetElementsByTagName("span")[0].TextContent; 
+                    }
+                }
+            }
+
+            return "";
+        }
+       
 
         public void GenerateHrefs()
         {

@@ -61,11 +61,10 @@ namespace CostsAnalyse
             })
                .AddEntityFrameworkStores<ApplicationContext>()
                .AddDefaultTokenProviders();
-           
-            
-            services.AddDbContext<ApplicationContext>(options=> options.UseSqlServer(Configuration.GetConnectionString("StringConnection")));
-            services.AddAuthentication().AddCookie();
+
             services.AddSingleton<ILogging, FileLogging>();
+            services.AddDbContext<ApplicationContext>(options=> options.UseSqlServer(Configuration.GetConnectionString("StringConnection")));
+            services.AddAuthentication().AddCookie(); 
             services.AddServerSideBlazor();
             services.AddScoped<ITask, TaskDriver>();
             services.AddMvc(); 
