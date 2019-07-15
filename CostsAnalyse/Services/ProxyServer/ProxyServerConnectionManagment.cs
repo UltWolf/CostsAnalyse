@@ -8,12 +8,33 @@ using System.Linq;
 using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CostsAnalyse.Services.ProxyServer
 {
-    public class ProxyServerConnectionManagment
+    public static  class ProxyServerConnectionManagment
     {
         private static BinaryFormatter bf;
+        
+        private static List<string> Urls =  new List<string>();
+        private readonly static object locker = new object();
+        
+
+        public static  List<string> GetUrlsList()
+        {
+            lock (locker)
+            {
+                if (Urls.Count != 0)
+                {
+
+                    return Urls;
+                }
+                else
+                {
+                    return DeserialiseUrl();
+                }
+            }
+        }
         public static   void SerialiseProxyServers(bool IsForce) {
             try
             {
@@ -120,14 +141,35 @@ namespace CostsAnalyse.Services.ProxyServer
             }
         }
         
-        public static List<string> GetProxyHrefs() {
-            List<string> hrefs = new List<string>();
-            using (FileStream fs = new FileStream("proxyList.txt", FileMode.Open, FileAccess.Read)){
-                bf = new BinaryFormatter();
-                hrefs = (List<string>)bf.Deserialize(fs);
+        private static void GenerateProxy() {
+            if (!File.Exists("proxyList.txt"))
+            {
+                SerialiseProxyServersUA(true);
             }
-            return hrefs;
+
+            if (Urls.Count == 0)
+            {
+                SetUrls();
+            } 
+        }
+
+        private static void SetUrls()
+        {
+           
+                lock (locker)
+                {
+                    Urls = DeserialiseUrl();
+                } 
+            
+        }
+
+        private static List<string>  DeserialiseUrl()
+        { 
+        using (FileStream fs = new FileStream("proxyList.txt", FileMode.Open, FileAccess.Read)) {
+            bf = new BinaryFormatter();
+            return  (List<string>)bf.Deserialize(fs);  
         }
 
         }
+    }
 }
