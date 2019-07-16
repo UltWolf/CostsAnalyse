@@ -12,8 +12,11 @@ using CostsAnalyse.Services;
 using CostsAnalyse.Extensions;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using CostsAnalyse.Models.Data;
 using CostsAnalyse.Services.Abstracts;
+using CostsAnalyse.Services.PageDrivers;
 using CostsAnalyse.Services.Repositories;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 
 namespace CostsAnalyse.Controllers
 {
@@ -95,16 +98,31 @@ namespace CostsAnalyse.Controllers
         {
              
             var services = ParsingServicesManager.GetListServices(_context);
-            foreach (var service in services)
+            var state = new CostsAnalyse.Services.Managers.StateManager().RecoverState();
+            if (state == null)
             {
-               service.GetProducts();
+                state =  new ParseState(1,Store.Rozetka);
             }
-            
+            switch (state.Type)
+            {
+                case Store.Rozetka:
+                    new RozetkaPageDriver(_context).GetProducts(state.index);
+                    goto case Store.Foxtrot;
+                case Store.Foxtrot:
+                    new FoxtrotPageDriver(_context).GetProducts(state.index);
+                    goto case Store.Eldorado;
+                case Store.Eldorado:
+                    throw new NotImplementedException();
+                    goto case Store.Comfy;
+                case Store.Comfy:
+                    throw new NotImplementedException();
+
+            } 
             return new JsonResult("Ok");
         }
         public void InitHrefs()
         {
-            RozetkaMenuDriver rmd = new RozetkaMenuDriver();
+            RozetkaMenuDriver rmd = RozetkaMenuDriver.GetInstanse();
             rmd.getPages();
         }
         

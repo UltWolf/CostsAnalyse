@@ -43,17 +43,17 @@ namespace CostsAnalyse.Services.PageDrivers
             }
             return pages;
         }
-        public void GetProducts()
+        public void GetProducts(int page = 0)
         {
             var pages = GetPages(); 
             var _stateManager = new StateManager();
-            for(int i=0;i<pages.Count;i++)
+            for(;page<pages.Count;page++)
             {
-                _stateManager.SaveState(new ParseState(i,Store.Rozetka));
-                ParseProductsFromPage(pages.GetItemByIndex(i), i);
+                _stateManager.SaveState(new ParseState(page,Store.Rozetka));
+                ParseProductsFromPage(pages.GetItemByIndex(page));
             } 
         }
-        public void ParseProductsFromPage(string url, int index)
+        public void ParseProductsFromPage(string url, int index = 0)
         {
             string baseUrl = url;
             if (index != 0)

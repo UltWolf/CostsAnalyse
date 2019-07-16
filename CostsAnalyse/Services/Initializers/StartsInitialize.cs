@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CostsAnalyse.Services.ProxyServer;
 
 namespace CostsAnalyse.Services.Initializers
 {
@@ -9,7 +10,7 @@ namespace CostsAnalyse.Services.Initializers
     {
         public static void Initialize()
         {
-            ProxyServer.ProxyServerConnectionManagment.SerialiseProxyServers(false);
+            new ProxyBuilder().GenerateProxy().Build();
         }
     }
 }

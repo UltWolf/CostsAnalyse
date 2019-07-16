@@ -12,27 +12,24 @@ namespace CostsAnalyse.Controllers
 {
     public class ServerRequestController : Controller
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+      
          [Authorize(Roles = "Administrator")]
                          public async Task<IActionResult> UpdateProxy()
-        {
-            ProxyServerConnectionManagment.SerialiseProxyServersUA(true);
+                         {
+                             new ProxyBuilder().GenerateProxy();
            
             return RedirectToAction("Index", "Products");
         }
          [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> getPagesMin(){
-             RozetkaMenuDriver rmd = new RozetkaMenuDriver();
+             RozetkaMenuDriver rmd = RozetkaMenuDriver.GetInstanse();
              rmd.getPages();
            
              return RedirectToAction("Index", "Products");
         }
          [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> GetPagesAuto(){
-             RozetkaMenuDriver rmd = new RozetkaMenuDriver();
+             RozetkaMenuDriver rmd = RozetkaMenuDriver.GetInstanse();
             rmd.GetPagesAuto();
               FoxtrotMenuDriver fmd = new FoxtrotMenuDriver();
              fmd.GetPagesAuto();

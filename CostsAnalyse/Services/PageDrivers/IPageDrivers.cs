@@ -10,7 +10,7 @@ namespace CostsAnalyse.Services.PageDrivers
     {
         HashSet<String> GetPages();
         void ParseProductsFromPage(string url,int index);
-        void GetProducts();
+        void GetProducts(int page);
         void GenerateHrefs();
 
 

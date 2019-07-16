@@ -10,8 +10,11 @@ using System;
 using System.Collections.Generic;
 using System.IO; 
 using System.Net;
-using System.Runtime.Serialization.Formatters.Binary; 
+using System.Runtime.Serialization.Formatters.Binary;
+using AngleSharp.Common;
 using AngleSharp.Html.Dom;
+using CostsAnalyse.Models.Data;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 
 namespace CostsAnalyse.Services.PageDrivers
 {
@@ -41,18 +44,14 @@ namespace CostsAnalyse.Services.PageDrivers
             return hrefs;
         }
 
-        public void GetProducts()
+        public void GetProducts(int page = 0)
         {
             
             var pages = GetPages();
-            List<Product> products = new List<Product>();
-            foreach (var page in pages)
-            {
-                if (proxyList.Count <= 1)
-                {
-                    break;
-                }
-                ParseProductsFromPage(page, 0);
+            var _stateManager = new CostsAnalyse.Services.Managers.StateManager();
+            for(;page<pages.Count;page++)
+            {   _stateManager.SaveState(new ParseState(page,Store.Rozetka));
+                ParseProductsFromPage(pages.GetItemByIndex(page));
             }
 
         }
@@ -100,7 +99,7 @@ namespace CostsAnalyse.Services.PageDrivers
             return null;
         }
 
-        public void ParseProductsFromPage(string url, int index)
+        public void ParseProductsFromPage(string url, int index = 0)
         {
             if (index != 0)
             {
