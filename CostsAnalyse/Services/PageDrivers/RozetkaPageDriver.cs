@@ -79,7 +79,7 @@ namespace CostsAnalyse.Services.PageDrivers
                Logging.FileLogging fl = new FileLogging();
                fl.LogAsync(ex, new {url, index});
             } 
-        }
+        }           
         
         private IHtmlCollection<IElement> GetPageWithProduct(string url,out IHtmlDocument htmlDocument)
         {

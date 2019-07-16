@@ -14,6 +14,7 @@ using System.Linq;
 using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
+using AngleSharp.Html.Dom;
 
 namespace CostsAnalyse.Services.PageDrivers
 {
@@ -26,7 +27,7 @@ namespace CostsAnalyse.Services.PageDrivers
         private List<string> proxyList;
          
         public FoxtrotPageDriver(ApplicationContext context) {
-            this.proxyList = ProxyServerConnectionManagment.GetProxyHrefs();
+            this.proxyList = new ProxyBuilder().GenerateProxy().Build();
             GenerateHrefs();
             this._context = context;
             _productRepository = new ProductRepository(_context);
@@ -58,6 +59,50 @@ namespace CostsAnalyse.Services.PageDrivers
             }
 
         }
+
+        private string GetHtml(string url)
+        {
+            foreach (var proxy in proxyList)
+            {
+                try
+                {
+                    WebRequest WR;
+
+                    if (url.Contains("https://www.foxtrot.com.ua"))
+                    {
+                        WR = WebRequest.Create(url);
+                    }
+                    else
+                    {
+                        WR = WebRequest.Create("https://www.foxtrot.com.ua" + url);
+                    }
+
+                    WR.Method = "GET";
+                    WR.Headers.Add("User-Agent",
+                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:65.0) Gecko/20100101 Firefox/65.0");
+                    string[] fulladress = proxy.Split(":");
+                    var (adress, port) = (fulladress[0], int.Parse(fulladress[1]));
+                    WebProxy myproxy = new WebProxy(adress, port);
+                    myproxy.BypassProxyOnLocal = false;
+                    WR.Proxy = myproxy;
+                    WebResponse response = WR.GetResponse(); 
+                    using (Stream stream = response.GetResponseStream())
+                    {
+                        using (StreamReader reader = new StreamReader(stream))
+                        {
+                            return  reader.ReadToEnd();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    fl.LogAsync(ex, new { proxy, url });
+                }
+            }
+
+            return null;
+        }
+
         public void ParseProductsFromPage(string url, int index)
         {
             if (index != 0)
@@ -65,83 +110,58 @@ namespace CostsAnalyse.Services.PageDrivers
                 url += "?page=" + index;
             }
             ThreadDelay.Delay();
-            foreach (var proxy in proxyList)
-            {
-                try
-                {
-                    string baseUrl = url;
-                    WebRequest WR;
-                   
-                    if (url.Contains("https://www.foxtrot.com.ua"))
-                    {
-                        WR = WebRequest.Create(url);
-                    }
-                    else
-                    {
-                      WR   = WebRequest.Create("https://www.foxtrot.com.ua" + url);
-                    }
-                    WR.Method = "GET";
-                    WR.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:65.0) Gecko/20100101 Firefox/65.0");
-                    string[] fulladress = proxy.Split(":");
-                    var (adress, port) = (fulladress[0], int.Parse(fulladress[1]));
-                    WebProxy myproxy = new WebProxy(adress, port);
-                    myproxy.BypassProxyOnLocal = false;
-                    WR.Proxy = myproxy;
-                    WebResponse response = WR.GetResponse();
-                    string html;
-                    using (Stream stream = response.GetResponseStream())
-                    {
-                        using (StreamReader reader = new StreamReader(stream))
-                        {
-                            html = reader.ReadToEnd();
-                        }
-                    }
-
-                    HtmlParser parser = new HtmlParser();
-                    var parseElement = parser.ParseDocument(html);
-                    var divsWithProduct = parseElement.GetElementsByClassName("product-listing")[0]
+            
+                 
+            string baseUrl = url;
+            HtmlParser parser = new HtmlParser(); 
+            var parseElement = parser.ParseDocument(GetHtml(url));
+            var divsWithProduct = parseElement.GetElementsByClassName("product-listing")[0]
                                                       .GetElementsByClassName("product-item");
-                  
+            
+            AddProducts(divsWithProduct,url);
+            string page = GetPage(parseElement);
+            if (page != "")
+            {
+                ParseProductsFromPage(baseUrl, int.Parse(page));
+            } 
+        }
 
-                    foreach (var div in divsWithProduct)
-                    {
-                        ThreadDelay.Delay();
-                        var product = CreateInstanseOfProduct(div, url);
-                        if (product != null)
-                        {
-                            if (_context != null)
-                            {
-                                AddToDBContext(product);
-                            }
-                        }
-                    }
-                    string page = "";
-                    var pagination = parseElement.GetElementsByClassName("pagination-number-list");
-                    if (pagination.Length > 0)
-                    {
-                        var pages = pagination[0].GetElementsByTagName("li");
-                        for (int i = 0; i < pages.Length; i++)
-                        {
-                            if (pages[i].ClassList.Contains("active"))
-                            {
-                                page = pages[++i].GetElementsByTagName("a")[0].GetElementsByTagName("span")[0].TextContent;
-                                break;
-                            }
-                        }
+        private void AddProducts(IHtmlCollection<IElement> divsWithProduct,string url)
+        {
+            foreach (var div in divsWithProduct)
+            {
+                AddProduct(div,url);
+            }
+        }
 
-                    }
-                    if (page != "")
-                    {
-                        ParseProductsFromPage(baseUrl, int.Parse(page));
-                    }
-
-                } 
-                catch (Exception ex)
+        private void AddProduct(IElement div,string url)
+        {
+            ThreadDelay.Delay();
+            var product = CreateInstanseOfProduct(div, url);
+            if (product != null)
+            {
+                if (_context != null)
                 {
-                    fl.LogAsync(ex, new List<string>() { proxy, url });
-                    
+                    AddToDBContext(product);
                 }
             }
+        }
+        private string GetPage(IHtmlDocument parseElement)
+        {
+            var pagination = parseElement.GetElementsByClassName("pagination-number-list");
+            if (pagination.Length > 0)
+            {
+                var pages = pagination[0].GetElementsByTagName("li");
+                for (int i = 0; i < pages.Length; i++)
+                {
+                    if (pages[i].ClassList.Contains("active"))
+                    {
+                        return pages[++i].GetElementsByTagName("a")[0].GetElementsByTagName("span")[0].TextContent; 
+                    }
+                }
+            }
+
+            return "";
         }
         private Product CreateInstanseOfProduct(IElement div,string url)
         {
@@ -200,7 +220,7 @@ namespace CostsAnalyse.Services.PageDrivers
   
                     _productRepository.AddProduct(product); 
             }
-    }
+       }
         private int getPriceFromNumb(IElement element)
         {
             return int.Parse(element.GetElementsByClassName("numb")[0].TextContent.Replace(" ", ""));
