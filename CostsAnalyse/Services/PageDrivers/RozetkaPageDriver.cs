@@ -161,7 +161,7 @@ namespace CostsAnalyse.Services.PageDrivers
         {
             if (!File.Exists("RozetkaHrefs.txt"))
             {
-                RozetkaMenuDriver RMD = new RozetkaMenuDriver();
+                RozetkaMenuDriver RMD = RozetkaMenuDriver.GetInstanse();
                 RMD.GetPagesAuto();
             }
         }

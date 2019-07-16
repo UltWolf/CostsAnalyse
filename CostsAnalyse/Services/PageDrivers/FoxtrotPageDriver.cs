@@ -1,6 +1,5 @@
 ﻿using AngleSharp.Dom;
-using AngleSharp.Html.Parser;
-using CostsAnalyse.Extensions;
+using AngleSharp.Html.Parser; 
 using CostsAnalyse.Models;
 using CostsAnalyse.Models.Context;
 using CostsAnalyse.Services.MenuDrivers;
@@ -9,11 +8,9 @@ using CostsAnalyse.Services.ProxyServer;
 using CostsAnalyse.Services.Repositories;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using System.IO; 
 using System.Net;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Threading.Tasks;
+using System.Runtime.Serialization.Formatters.Binary; 
 using AngleSharp.Html.Dom;
 
 namespace CostsAnalyse.Services.PageDrivers

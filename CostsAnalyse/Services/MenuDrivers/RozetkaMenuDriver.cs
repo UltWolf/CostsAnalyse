@@ -15,13 +15,29 @@ namespace CostsAnalyse.Services
 {
     public class RozetkaMenuDriver
     {
-        List<string> proxyList;
-        public RozetkaMenuDriver()
+        private List<string> proxys;
+        private static RozetkaMenuDriver _instanse;
+        private static  object _locker = new object();
+        private RozetkaMenuDriver()
         {
-            proxyList = ProxyServerConnectionManagment.GetProxyHrefs();
+            proxys = new ProxyBuilder().GenerateProxy().Build();
         }
 
+        public static RozetkaMenuDriver GetInstanse()
+        {
+            lock (_locker)
+            {
+                if (_instanse == null)
+                {
+                    lock (_locker)
+                    {
+                        _instanse = new RozetkaMenuDriver();
+                    }
+                }
+            }
 
+            return _instanse;
+        }
         public void getPages()
         {
             HashSet<string> pages = new HashSet<string>();
@@ -37,9 +53,8 @@ namespace CostsAnalyse.Services
 
         public void GetPagesAuto()
         {
+            
             HashSet<String> listOfHrefs = new HashSet<string>();
-            List<string> proxys = new List<string>(ProxyServerConnectionManagment.GetProxyHrefs());
-          
             if (proxys.Count > 0)
             {
           
@@ -96,8 +111,7 @@ namespace CostsAnalyse.Services
 
         private void GetInsidingHrefsInHrefs(IHtmlCollection<IElement> hrefs, ref HashSet<string> listOfHrefs)
         {
-            HtmlParser parser = new HtmlParser();
-            List<string> proxys = new List<string>(ProxyServerConnectionManagment.GetProxyHrefs());
+            HtmlParser parser = new HtmlParser(); 
             if (proxys.Count > 0)
             {
 
