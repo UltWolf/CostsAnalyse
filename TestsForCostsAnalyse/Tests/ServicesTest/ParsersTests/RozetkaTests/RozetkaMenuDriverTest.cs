@@ -9,7 +9,7 @@ namespace TestsForCostsAnalyse.Tests.ParsersTests
 {
     public class RozetkaPageDriverTest
     {
-        RozetkaMenuDriver RMD = new RozetkaMenuDriver();
+        RozetkaMenuDriver RMD = RozetkaMenuDriver.GetInstanse();
         [Fact]
         public void SetPageWithOutExceptions() { 
             RMD.GetPagesAuto();

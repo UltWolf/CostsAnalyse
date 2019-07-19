@@ -9,13 +9,14 @@ namespace TestsForCostsAnalyse.Tests.ProxyServerTests
     public class ProxyServerConnectionManagerTests
     {
         [Fact]
-        public void NoExceptionToWorkWithInitiateProxy() {
-            ProxyServerConnectionManagment.SerialiseProxyServers(true);
+        public void NoExceptionToWorkWithInitiateProxy()
+        {
+            new ProxyBuilder().GenerateProxy().Build();
         }
         [Fact]
         public void NoExceptionToWorkWithInitiateProxyWithSecondMethod()
         {
-            ProxyServerConnectionManagment.SerialiseProxyServersUA(true);
+            ProxyServerConnectionManagment.GenerateProxy();
         }
 
     }

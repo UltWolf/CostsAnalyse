@@ -17,7 +17,7 @@ namespace TestsForCostsAnalyse.Tests.ParsersTests.FoxtrotTest
         public void ProductsAreNotNull(string url)
         {
             FoxtrotParser rpd = new FoxtrotParser();
-            List<String> proxys = ProxyServerConnectionManagment.GetProxyHrefs();
+            List<String> proxys = new ProxyBuilder().GenerateProxy().Build();
             Assert.NotNull(rpd.GetProduct(url,ref proxys));
 
         }

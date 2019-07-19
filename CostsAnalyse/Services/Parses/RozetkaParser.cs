@@ -39,8 +39,7 @@ namespace CostsAnalyse.Services.Parses
                 {
 
                 }
-            }
-            ProxyServerConnectionManagment.SerializeByPuts(proxyList);
+            } 
             return product;
         }
         

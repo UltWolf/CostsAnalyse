@@ -13,7 +13,7 @@ namespace TestsForCostsAnalyse.Tests.ParsersTests.ComfyTest
         public void ProductAreNotNull()
         {
             ComfyParser cp = new ComfyParser();
-            List<String> proxys = ProxyServerConnectionManagment.GetProxyHrefs();
+            List<String> proxys = new ProxyBuilder().GenerateProxy().Build();
             Assert.NotNull(cp.GetProduct("https://comfy.ua/stiral-naja-mashina-lg-fh0b8nd1.html",ref proxys));
 
         }
