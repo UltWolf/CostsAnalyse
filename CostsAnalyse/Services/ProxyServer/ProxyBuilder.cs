@@ -147,7 +147,6 @@ namespace CostsAnalyse.Services.ProxyServer
                 }
 
             }
-        }
-
+        } 
     }
 }
