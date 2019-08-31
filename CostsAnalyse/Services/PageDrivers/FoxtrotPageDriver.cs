@@ -20,8 +20,7 @@ namespace CostsAnalyse.Services.PageDrivers
 {
     public class FoxtrotPageDriver : IPageDrivers
     {
-        private readonly BinaryFormatter _bf = new BinaryFormatter();
-        private readonly Logging.FileLogging fl = new Logging.FileLogging();
+        private readonly BinaryFormatter _bf = new BinaryFormatter(); 
         private readonly ApplicationContext _context;
         private readonly ProductRepository _productRepository;
         private List<string> proxyList;
@@ -91,8 +90,7 @@ namespace CostsAnalyse.Services.PageDrivers
                     }
                 }
                 catch (Exception ex)
-                {
-                    fl.LogAsync(ex, new { proxy, url });
+                { 
                 }
             }
 
@@ -204,8 +202,7 @@ namespace CostsAnalyse.Services.PageDrivers
                 return product;
             }
             catch (Exception ex)
-            {
-                fl.LogAsync(ex, product);
+            { 
                 return null;
             }
         }

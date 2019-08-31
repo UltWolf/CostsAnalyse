@@ -13,11 +13,7 @@ namespace TestsForCostsAnalyse.Tests.ProxyServerTests
         {
             new ProxyBuilder().GenerateProxy().Build();
         }
-        [Fact]
-        public void NoExceptionToWorkWithInitiateProxyWithSecondMethod()
-        {
-            ProxyServerConnectionManagment.GenerateProxy();
-        }
+         
 
     }
 }

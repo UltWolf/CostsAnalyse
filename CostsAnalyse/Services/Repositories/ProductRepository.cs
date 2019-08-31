@@ -10,8 +10,7 @@ using System.Threading.Tasks;
 namespace CostsAnalyse.Services.Repositories
 {
     public class ProductRepository : IRepository<Product>
-    {
-        private readonly Logging.FileLogging fl = new Logging.FileLogging();
+    { 
         private readonly ApplicationContext _context;
         public ProductRepository(ApplicationContext applicationContext){
             _context = applicationContext;
@@ -52,8 +51,7 @@ namespace CostsAnalyse.Services.Repositories
 
             }
             catch(Exception ex)
-            {
-                fl.LogAsync(ex, product);
+            { 
                 return false;
             }
            
@@ -71,8 +69,7 @@ namespace CostsAnalyse.Services.Repositories
                 return true;
             }
             catch (Exception ex)
-            {
-                await fl.LogAsync(ex, item);
+            { 
                 return false;
             }
         }
@@ -86,8 +83,7 @@ namespace CostsAnalyse.Services.Repositories
                 return true;
             }
             catch(Exception ex)
-            {
-                this.fl.LogAsync(ex, item);
+            { 
                 return false;
             }
         }
@@ -101,8 +97,7 @@ namespace CostsAnalyse.Services.Repositories
                 _context.SaveChanges();
                 return true;
             }catch(Exception ex)
-            {
-                 fl.LogAsync(ex, product);
+            { 
                 return false;
             }
         }
@@ -137,8 +132,7 @@ namespace CostsAnalyse.Services.Repositories
                 
             }
             catch(Exception ex)
-            {
-                await fl.LogAsync(ex, product);
+            { 
                 return false;
             }
         }

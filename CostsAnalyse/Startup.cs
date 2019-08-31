@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 using CostsAnalyse.Models;
 using CostsAnalyse.Models.Context;
 using CostsAnalyse.Services.Abstracts;
-using CostsAnalyse.Services.Initializers;
-using CostsAnalyse.Services.Logging;
+using CostsAnalyse.Services.Initializers; 
 using CostsAnalyse.Services.ScheduleDriver;
 using Hangfire;
 using Hangfire.PostgreSql;
@@ -23,6 +22,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace CostsAnalyse
@@ -61,8 +61,7 @@ namespace CostsAnalyse
             })
                .AddEntityFrameworkStores<ApplicationContext>()
                .AddDefaultTokenProviders();
-
-            services.AddSingleton<ILogging, FileLogging>();
+             
             services.AddDbContext<ApplicationContext>(options=> options.UseSqlServer(Configuration.GetConnectionString("StringConnection")));
             services.AddAuthentication().AddCookie(); 
             services.AddServerSideBlazor();
@@ -78,8 +77,7 @@ namespace CostsAnalyse
             RoleInitializer roleInitializer = new RoleInitializer();
             roleInitializer.Initialize(provider);
             AdminInitialize adminInitialize = new AdminInitialize();
-            adminInitialize.Initialize(provider);
-            LoggingProvider.InitiateFolder();
+            adminInitialize.Initialize(provider); 
             services.AddHangfire((config) => {
                 var options = new SqlServerStorageOptions
                 {
@@ -94,8 +92,9 @@ namespace CostsAnalyse
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        { 
+            loggerFactory.AddLog4Net( );
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -104,8 +103,7 @@ namespace CostsAnalyse
             {
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
-            }
-             
+            } 
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseAuthentication();

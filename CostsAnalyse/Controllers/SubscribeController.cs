@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CostsAnalyse.Models;
-using CostsAnalyse.Models.Context;
-using CostsAnalyse.Services.Logging;
+using CostsAnalyse.Models.Context; 
 using CostsAnalyse.Services.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -17,8 +16,7 @@ namespace CostsAnalyse.Controllers
     [ApiController]
     public class SubscribeController : ControllerBase
     {
-        private readonly ApplicationContext _context;
-        private readonly FileLogging _logging;
+        private readonly ApplicationContext _context; 
         private readonly SubscribeRepository _subscribeRepository;
         private readonly UserManager<UserApp> _userManager;
         private readonly ProductRepository _productRepository;  
@@ -26,8 +24,7 @@ namespace CostsAnalyse.Controllers
         public SubscribeController(ApplicationContext context, UserManager<UserApp> userManager)
         {
             _context = context;
-            _userManager = userManager;
-            _logging = new FileLogging(); 
+            _userManager = userManager; 
             _subscribeRepository = new SubscribeRepository(_context);
             _productRepository = new ProductRepository(_context);
         }

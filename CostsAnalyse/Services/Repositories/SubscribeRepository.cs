@@ -10,8 +10,7 @@ namespace CostsAnalyse.Services.Repositories
 {
     public class SubscribeRepository : IManyToManyRepository<UserApp, Product>
     {
-        private readonly ApplicationContext _context;
-        Logging.FileLogging fl = new Logging.FileLogging();
+        private readonly ApplicationContext _context; 
         public SubscribeRepository(ApplicationContext applicationContext)
         {
             _context = applicationContext;
@@ -35,8 +34,7 @@ namespace CostsAnalyse.Services.Repositories
                 return true;
             }
             catch (Exception ex)
-            {
-                fl.LogAsync(ex, UP);
+            { 
                 return false;
             }
         }
@@ -57,8 +55,7 @@ namespace CostsAnalyse.Services.Repositories
                 return true;
             }
             catch(Exception ex)
-            {
-                fl.LogAsync(ex, new List<Object>() { secondItem, item });
+            { 
                 return false;
             }
         }

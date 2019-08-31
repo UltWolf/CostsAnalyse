@@ -10,8 +10,10 @@ namespace CostsAnalyse.Controllers
 {
     public class HomeController : Controller
     {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(HomeController));
         public IActionResult Index()
         {
+            log.Info("Index");
             return View();
         }
 

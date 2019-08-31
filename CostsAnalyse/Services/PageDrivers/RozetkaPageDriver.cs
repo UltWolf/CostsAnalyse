@@ -15,8 +15,7 @@ using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using CostsAnalyse.Services.ProxyServer;
 using CostsAnalyse.Models.Context;
-using CostsAnalyse.Models.Data;
-using CostsAnalyse.Services.Logging;
+using CostsAnalyse.Models.Data; 
 using CostsAnalyse.Services.Managers;
 
 namespace CostsAnalyse.Services.PageDrivers
@@ -75,9 +74,7 @@ namespace CostsAnalyse.Services.PageDrivers
                 }
             } 
             catch (Exception ex)
-            {
-               Logging.FileLogging fl = new FileLogging();
-               fl.LogAsync(ex, new {url, index});
+            {  
             } 
         }           
         
